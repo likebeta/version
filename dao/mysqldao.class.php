@@ -25,13 +25,13 @@ class MysqlDao
 			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
-		if (!($game instanceof GameType) || !$game->isLegal()) 
+		if (!($game instanceof GameInfo)) 
 		{
 			printf("param errro\n");
 			return false;
 		}
 
-		$strsql = "INSERT INTO gametype VALUES($game->type,'$game->name','$game->description')";
+		$strsql = "INSERT INTO gameinfo VALUES($game->type,'$game->name','$game->description')";
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
@@ -48,13 +48,14 @@ class MysqlDao
 			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
-		if (!($commonsvrds instanceof CommonSvrds) || !$commonsvrds->isLegal()) 
+		if (!($commonsvrds instanceof CommonSvrds)) 
 		{
 			printf("param errro\n");
 			return false;
 		}
-
-		$strsql = "INSERT INTO commonsvrds VALUES(NULL,'$commonsvrds->adminsvrd','$commonsvrds->dbsvrd','$commonsvrds->friendsvrd','$commonsvrds->logsvrd','$commonsvrds->propretysvrd','$commonsvrds->proxysvrd','$commonsvrds->roommngsvrd','$commonsvrds->shopsvrd','$commonsvrds->statsvrd','$commonsvrds->websvrd','$commonsvrds->time')";
+		date_default_timezone_set('Asia/Shanghai');
+		$time = date("Y-m-d H:i:s");
+		$strsql = "INSERT INTO commonsvrds VALUES(NULL,'$commonsvrds->adminsvrd','$commonsvrds->dbsvrd','$commonsvrds->friendsvrd','$commonsvrds->logsvrd','$commonsvrds->propertysvrd','$commonsvrds->proxysvrd','$commonsvrds->roommngsvrd','$commonsvrds->shopsvrd','$commonsvrds->statsvrd','$commonsvrds->websvrd','$time')";
 
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
@@ -72,7 +73,7 @@ class MysqlDao
 			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
-		if (!($versions instanceof Versions) || !$versions->isLegal()) 
+		if (!($versions instanceof Versions)) 
 		{
 			printf("param errro\n");
 			return false;
@@ -88,7 +89,7 @@ class MysqlDao
 		return true;
 	}
 
-	function getGameType($gametype)
+	function getGameInfo($gametype=-1)
 	{
 		if ($this->mysql->connect_errno)
 		{
@@ -96,18 +97,32 @@ class MysqlDao
 			return false;
 		}	
 		
-		$strsql = "SELECT type,name,description FROM gametype where type=$gametype";
+		if ($gametype == -1)
+		{
+			$strsql = "SELECT type,name,description FROM gameinfo";
+		}
+		else
+		{
+			$strsql = "SELECT type,name,description FROM gameinfo where type=$gametype";
+		}
+
 		$result = $this->mysql->query($strsql);
-		if (!$result) {
-			printf("query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+		if (!$result)
+		{
+			printf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
-		$row = $this->mysql->fetch_assoc();
+
+		$returns = array();
+		while ($row = $result->fetch_assoc())
+		{
+			$returns[] = new gameinfo($row['type'],$row['name'],$row['description']);
+		}
 		
-		return new GameType($row['type'],$row['name'],$row['description']);
+		return $returns;
 	}
 
-	function getCurrentGameInfo($gametype)
+	function getGameCurrentVersionInfo($gametype)
 	{
 		if ($this->mysql->connect_errno)
 		{
@@ -115,21 +130,97 @@ class MysqlDao
 			return false;
 		}
 
-		$strsql = "SELECT ";
+		$strsql = "SELECT * FROM gamevisioninfo WHERE type=$gametype ORDER BY version DESC LIMIT 1";
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			printf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			printf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
-		return true;
+
+		if ($result->num_rows != 1)
+		{
+			printf("Result error: row(%d),don't exists the game(%d)\n",$result->num_rows,$gametype);
+			return false;
+		}
+
+		$row = $result->fetch_assoc();
+		$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
+		$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
+		$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+		$versions->time = $row['time'];
+		$versions->version = $row['version'];
+
+		return new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
+	}
+
+	function getGameThisVersionInfo($gametype,$version)
+	{
+		if ($this->mysql->connect_errno)
+		{
+			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			return false;
+		}
+
+		$strsql = "SELECT * FROM gamevisioninfo WHERE type=$gametype AND version=$version";
+		$result = $this->mysql->query($strsql);
+		if (!$result) 
+		{
+			printf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			return false;
+		}
+
+		if ($result->num_rows != 1)
+		{
+			printf("Result error: row(%d),don't exists the game(%d) with the version(%d)\n",$result->num_rows,$gametype,$version);
+			return false;
+		}
+
+		$row = $result->fetch_assoc();
+		$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
+		$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
+		$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+		$versions->time = $row['time'];
+		$versions->version = $row['version'];
+
+		return new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
+	}
+
+	function getCurrentVersionInfo()
+	{
+		if ($this->mysql->connect_errno)
+		{
+			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			return false;
+		}
+
+		$strsql = "SELECT * FROM gamevisioninfo WHERE version IN (SELECT MAX(version) FROM gamevisioninfo GROUP BY type)";
+		$result = $this->mysql->query($strsql);
+		if (!$result) 
+		{
+			printf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			return false;
+		}
+
+		$returns = array();
+		while ($row = $result->fetch_assoc())
+		{
+			$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
+			$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
+			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+			$versions->time = $row['time'];
+			$versions->version = $row['version'];
+			$returns[] = new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
+		}
+
+		return $returns;
 	}
 }
 
 /**
 * addNewGame 传入类
 */
-class GameType
+class GameInfo
 {
 	public $type;
 	public $name;
@@ -139,11 +230,6 @@ class GameType
 		$this->type = $type;
 		$this->name = $name;
 		$this->description = $desc;
-	}
-
-	function isLegal()
-	{
-		return true;
 	}
 }
 
@@ -156,32 +242,27 @@ class CommonSvrds
 	public $dbsvrd;
 	public $friendsvrd;
 	public $logsvrd;
-	public $propretysvrd;
+	public $propertysvrd;
 	public $proxysvrd;
 	public $roommngsvrd;
 	public $shopsvrd;
 	public $statsvrd;
 	public $websvrd;
-	public $time;
-	function __construct($adminsvrd,$dbsvrd,$friendsvrd,$logsvrd,$propretysvrd,$proxysvrd,$roommngsvrd,$shopsvrd,$statsvrd,$websvrd)
+//	public $time;
+	function __construct($adminsvrd,$dbsvrd,$friendsvrd,$logsvrd,$propertysvrd,$proxysvrd,$roommngsvrd,$shopsvrd,$statsvrd,$websvrd)
 	{
 		$this->adminsvrd = $adminsvrd;
 		$this->dbsvrd = $dbsvrd;
 		$this->friendsvrd = $friendsvrd;
 		$this->logsvrd = $logsvrd;
-		$this->propretysvrd = $propretysvrd;
+		$this->propertysvrd = $propertysvrd;
 		$this->proxysvrd = $proxysvrd;
 		$this->roommngsvrd = $roommngsvrd;
 		$this->shopsvrd = $shopsvrd;
 		$this->statsvrd = $statsvrd;
 		$this->websvrd = $websvrd;
-		date_default_timezone_set('Asia/Shanghai');
-		$this->time = date("Y-m-d H:i:s");
-	}
-
-	function isLegal()
-	{
-		return true;
+//		date_default_timezone_set('Asia/Shanghai');
+//		$this->time = date("Y-m-d H:i:s");
 	}
 }
 
@@ -190,6 +271,7 @@ class CommonSvrds
 */
 class Versions
 {
+	public $version;
 	public $type;
 	public $so;
 	public $gamesvrd;
@@ -199,6 +281,7 @@ class Versions
 	public $comment;
 	function __construct($type,$so,$gamesvrd,$client,$commonsvrds_ver,$comment)
 	{
+		$this->version = -1;
 		$this->type = $type;
 		$this->so = $so;
 		$this->gamesvrd = $gamesvrd;
@@ -208,18 +291,21 @@ class Versions
 		$this->time = date("Y-m-d H:i:s");
 		$this->comment = $comment;
 	}
-
-	function isLegal()
-	{
-		return true;
-	}
 }
 
 /**
-* getCurrentGameInfo 传出类
+* getGameCurrentVersionInfo 传出类
 */
-class CurrentGameInfo
+class GameCurrentVersionInfo
 {
-	
+	public $gameinfo;
+	public $commonsvrds;
+	public $versions;
+	function __construct($gameinfo,$commonsvrds,$versions)
+	{
+		$this->gameinfo = $gameinfo;
+		$this->commonsvrds = $commonsvrds;
+		$this->versions = $versions;
+	}
 }
 ?>
