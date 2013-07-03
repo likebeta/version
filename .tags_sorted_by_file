@@ -1,0 +1,117 @@
+error_reason	blo\error.php	/^		$error_reason = 'error param';$/;"	v
+error_reason	blo\error.php	/^		$error_reason = 'miss param';$/;"	v
+error_reason	blo\error.php	/^	$error_reason = 'illegal request';$/;"	v
+params_count	blo\error.php	/^	$params_count = count($route_params);$/;"	v
+dao	blo\query-game.php	/^$dao = new MysqlDao();$/;"	v
+error_reason	blo\query-game.php	/^	$error_reason = 'error params';$/;"	v
+error_reason	blo\query-game.php	/^	$error_reason = 'illegal request';$/;"	v
+DB_MYSQL_DBNAME	dao\config.inc.php	/^define('DB_MYSQL_DBNAME', 'test');$/;"	d
+DB_MYSQL_HOST	dao\config.inc.php	/^define('DB_MYSQL_HOST', 'localhost');$/;"	d
+DB_MYSQL_PASSWORD	dao\config.inc.php	/^define('DB_MYSQL_PASSWORD', '359359');$/;"	d
+DB_MYSQL_PORT	dao\config.inc.php	/^define('DB_MYSQL_PORT', 3306);$/;"	d
+DB_MYSQL_USERNAME	dao\config.inc.php	/^define('DB_MYSQL_USERNAME', 'root');$/;"	d
+CommonSvrds	dao\mysqldao.class.php	/^class CommonSvrds$/;"	c
+GameCurrentVersionInfo	dao\mysqldao.class.php	/^class GameCurrentVersionInfo$/;"	c
+GameInfo	dao\mysqldao.class.php	/^class GameInfo$/;"	c
+MysqlDao	dao\mysqldao.class.php	/^class MysqlDao$/;"	c
+Versions	dao\mysqldao.class.php	/^class Versions$/;"	c
+__construct	dao\mysqldao.class.php	/^	function __construct($adminsvrd,$dbsvrd,$friendsvrd,$logsvrd,$propertysvrd,$proxysvrd,$roommngsvrd,$shopsvrd,$statsvrd,$websvrd)$/;"	f
+__construct	dao\mysqldao.class.php	/^	function __construct($gameinfo,$commonsvrds,$versions)$/;"	f
+__construct	dao\mysqldao.class.php	/^	function __construct($type,$name,$desc)$/;"	f
+__construct	dao\mysqldao.class.php	/^	function __construct($type,$so,$gamesvrd,$client,$commonsvrds_ver,$comment)$/;"	f
+__construct	dao\mysqldao.class.php	/^	function __construct()$/;"	f
+__destruct	dao\mysqldao.class.php	/^	function __destruct()$/;"	f
+addNewCommonSvrds	dao\mysqldao.class.php	/^	function addNewCommonSvrds($commonsvrds)$/;"	f
+addNewGame	dao\mysqldao.class.php	/^	function addNewGame($game)$/;"	f
+addNewVersions	dao\mysqldao.class.php	/^	function addNewVersions($versions)$/;"	f
+adminsvrd	dao\mysqldao.class.php	/^		$this->adminsvrd = $adminsvrd;$/;"	v
+adminsvrd	dao\mysqldao.class.php	/^	public $adminsvrd;$/;"	v
+client	dao\mysqldao.class.php	/^		$this->client = $client;$/;"	v
+client	dao\mysqldao.class.php	/^	public $client;$/;"	v
+comment	dao\mysqldao.class.php	/^		$this->comment = $comment;$/;"	v
+comment	dao\mysqldao.class.php	/^	public $comment;$/;"	v
+commonsvrds	dao\mysqldao.class.php	/^			$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);$/;"	v
+commonsvrds	dao\mysqldao.class.php	/^		$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);$/;"	v
+commonsvrds	dao\mysqldao.class.php	/^		$this->commonsvrds = $commonsvrds;$/;"	v
+commonsvrds	dao\mysqldao.class.php	/^	public $commonsvrds;$/;"	v
+commonsvrds_ver	dao\mysqldao.class.php	/^		$this->commonsvrds_ver = $commonsvrds_ver;$/;"	v
+commonsvrds_ver	dao\mysqldao.class.php	/^	public $commonsvrds_ver;$/;"	v
+dbsvrd	dao\mysqldao.class.php	/^		$this->dbsvrd = $dbsvrd;$/;"	v
+dbsvrd	dao\mysqldao.class.php	/^	public $dbsvrd;$/;"	v
+description	dao\mysqldao.class.php	/^		$this->description = $desc;$/;"	v
+description	dao\mysqldao.class.php	/^	public $description;$/;"	v
+friendsvrd	dao\mysqldao.class.php	/^		$this->friendsvrd = $friendsvrd;$/;"	v
+friendsvrd	dao\mysqldao.class.php	/^	public $friendsvrd;$/;"	v
+gameinfo	dao\mysqldao.class.php	/^			$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);$/;"	v
+gameinfo	dao\mysqldao.class.php	/^		$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);$/;"	v
+gameinfo	dao\mysqldao.class.php	/^		$this->gameinfo = $gameinfo;$/;"	v
+gameinfo	dao\mysqldao.class.php	/^	public $gameinfo;$/;"	v
+gamesvrd	dao\mysqldao.class.php	/^		$this->gamesvrd = $gamesvrd;$/;"	v
+gamesvrd	dao\mysqldao.class.php	/^	public $gamesvrd;$/;"	v
+getCurrentVersionInfo	dao\mysqldao.class.php	/^	function getCurrentVersionInfo()$/;"	f
+getGameCurrentVersionInfo	dao\mysqldao.class.php	/^	function getGameCurrentVersionInfo($gametype)$/;"	f
+getGameInfo	dao\mysqldao.class.php	/^	function getGameInfo($gametype=-1)$/;"	f
+getGameThisVersionInfo	dao\mysqldao.class.php	/^	function getGameThisVersionInfo($gametype,$version)$/;"	f
+logsvrd	dao\mysqldao.class.php	/^		$this->logsvrd = $logsvrd;$/;"	v
+logsvrd	dao\mysqldao.class.php	/^	public $logsvrd;$/;"	v
+mysql	dao\mysqldao.class.php	/^		$this->mysql = new mysqli(DB_MYSQL_HOST,DB_MYSQL_USERNAME,DB_MYSQL_PASSWORD,DB_MYSQL_DBNAME,DB_MYSQL_PORT);$/;"	v
+mysql	dao\mysqldao.class.php	/^	private $mysql = null;$/;"	v
+name	dao\mysqldao.class.php	/^		$this->name = $name;$/;"	v
+name	dao\mysqldao.class.php	/^	public $name;$/;"	v
+propertysvrd	dao\mysqldao.class.php	/^		$this->propertysvrd = $propertysvrd;$/;"	v
+propertysvrd	dao\mysqldao.class.php	/^	public $propertysvrd;$/;"	v
+proxysvrd	dao\mysqldao.class.php	/^		$this->proxysvrd = $proxysvrd;$/;"	v
+proxysvrd	dao\mysqldao.class.php	/^	public $proxysvrd;$/;"	v
+result	dao\mysqldao.class.php	/^		$result = $this->mysql->query($strsql);$/;"	v
+returns	dao\mysqldao.class.php	/^		$returns = array();$/;"	v
+roommngsvrd	dao\mysqldao.class.php	/^		$this->roommngsvrd = $roommngsvrd;$/;"	v
+roommngsvrd	dao\mysqldao.class.php	/^	public $roommngsvrd;$/;"	v
+row	dao\mysqldao.class.php	/^		$row = $result->fetch_assoc();$/;"	v
+shopsvrd	dao\mysqldao.class.php	/^		$this->shopsvrd = $shopsvrd;$/;"	v
+shopsvrd	dao\mysqldao.class.php	/^	public $shopsvrd;$/;"	v
+so	dao\mysqldao.class.php	/^		$this->so = $so;$/;"	v
+so	dao\mysqldao.class.php	/^	public $so;$/;"	v
+statsvrd	dao\mysqldao.class.php	/^		$this->statsvrd = $statsvrd;$/;"	v
+statsvrd	dao\mysqldao.class.php	/^	public $statsvrd;$/;"	v
+strsql	dao\mysqldao.class.php	/^			$strsql = "SELECT type,name,description FROM gameinfo where type=$gametype";$/;"	v
+strsql	dao\mysqldao.class.php	/^			$strsql = "SELECT type,name,description FROM gameinfo";$/;"	v
+strsql	dao\mysqldao.class.php	/^		$strsql = "INSERT INTO commonsvrds VALUES(NULL,'$commonsvrds->adminsvrd','$commonsvrds->dbsvrd','$commonsvrds->friendsvrd','$commonsvrds->logsvrd','$commonsvrds->propertysvrd','$commonsvrds->proxysvrd','$commonsvrds->roommngsvrd','$commonsvrds->shopsvrd','$commonsvrds->statsvrd','$commonsvrds->websvrd','$time')";$/;"	v
+strsql	dao\mysqldao.class.php	/^		$strsql = "INSERT INTO gameinfo VALUES($game->type,'$game->name','$game->description')";$/;"	v
+strsql	dao\mysqldao.class.php	/^		$strsql = "INSERT INTO versions VALUES(NULL,$versions->type,'$versions->so','$versions->gamesvrd','$versions->client',$versions->commonsvrds_ver,'$versions->time','$versions->comment')";$/;"	v
+strsql	dao\mysqldao.class.php	/^		$strsql = "SELECT * FROM gamevisioninfo WHERE type=$gametype AND version=$version";$/;"	v
+strsql	dao\mysqldao.class.php	/^		$strsql = "SELECT * FROM gamevisioninfo WHERE type=$gametype ORDER BY version DESC LIMIT 1";$/;"	v
+strsql	dao\mysqldao.class.php	/^		$strsql = "SELECT * FROM gamevisioninfo WHERE version IN (SELECT MAX(version) FROM gamevisioninfo GROUP BY type)";$/;"	v
+time	dao\mysqldao.class.php	/^		$this->time = date("Y-m-d H:i:s");$/;"	v
+time	dao\mysqldao.class.php	/^		$time = date("Y-m-d H:i:s");$/;"	v
+time	dao\mysqldao.class.php	/^	public $time;$/;"	v
+time	dao\mysqldao.class.php	/^\/\/		$this->time = date("Y-m-d H:i:s");$/;"	v
+time	dao\mysqldao.class.php	/^\/\/	public $time;$/;"	v
+type	dao\mysqldao.class.php	/^		$this->type = $type;$/;"	v
+type	dao\mysqldao.class.php	/^	public $type;$/;"	v
+version	dao\mysqldao.class.php	/^		$this->version = -1;$/;"	v
+version	dao\mysqldao.class.php	/^	public $version;$/;"	v
+versions	dao\mysqldao.class.php	/^			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);$/;"	v
+versions	dao\mysqldao.class.php	/^		$this->versions = $versions;$/;"	v
+versions	dao\mysqldao.class.php	/^		$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);$/;"	v
+versions	dao\mysqldao.class.php	/^	public $versions;$/;"	v
+websvrd	dao\mysqldao.class.php	/^		$this->websvrd = $websvrd;$/;"	v
+websvrd	dao\mysqldao.class.php	/^	public $websvrd;$/;"	v
+gameinfo	dao\test.php	/^$gameinfo = new GameInfo(1,'ddz','斗地主');$/;"	v
+svrds	dao\test.php	/^$svrds = new CommonSvrds('adminsvrd1.0','dbsvrd1.0','friendsvrd1.0','logsvrd1.0','propretysvrd1.0','proxysvrd1.0','roommngsvrd1.0','shopsvrd1.0','statsvrd1.0','websvrd1.0');$/;"	v
+test	dao\test.php	/^$test = new MysqlDao();$/;"	v
+versions	dao\test.php	/^$versions = new Versions(2,'release1.0_9527','release1.0_9666','release1.0_1022',1,'斗地主升级，添加moeny限制');$/;"	v
+BLO_DIR	index.php	/^define('BLO_DIR', ROOT_DIR.'\/blo');$/;"	d
+DAO_DIR	index.php	/^define('DAO_DIR', ROOT_DIR.'\/dao');$/;"	d
+ROOT_DIR	index.php	/^define('ROOT_DIR', dirname(__FILE__));$/;"	d
+VIEW_DIR	index.php	/^define('VIEW_DIR', ROOT_DIR.'\/view');$/;"	d
+convertUrlToArray	index.php	/^function convertUrlToArray()$/;"	f
+filename	index.php	/^	$filename = BLO_DIR.'\/'.$route_params[0].'-'.$route_params[1].'.php';$/;"	v
+request_url	index.php	/^	$request_url = $_SERVER['REQUEST_URI'];$/;"	v
+route_params	index.php	/^	$route_params = explode('\/',$request_url);$/;"	v
+route_params	index.php	/^$route_params = convertUrlToArray();$/;"	v
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_PROGRAM_VERSION	5.8	//
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/

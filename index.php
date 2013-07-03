@@ -1,4 +1,4 @@
 <?php
-require('dao/mysqldao.class.php');
-$m = new MysqlDao();
+$_SERVER['REQUEST_URI'] = '/home';
+require_once('route.php');
 ?>

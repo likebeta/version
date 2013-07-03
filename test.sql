@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2013-07-01 14:51:56
+Date: 2013-07-03 19:54:17
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -32,13 +32,7 @@ CREATE TABLE `commonsvrds` (
   `websvrd` varchar(255) NOT NULL,
   `time` datetime NOT NULL,
   PRIMARY KEY (`version`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of commonsvrds
--- ----------------------------
-INSERT INTO commonsvrds VALUES ('1', 'adminsvrd1.0', 'dbsvrd1.0', 'friendsvrd1.0', 'logsvrd1.0', 'propretysvrd1.0', 'proxysvrd1.0', 'roommngsvrd1.0', 'shopsvrd1.0', 'statsvrd1.0', 'websvrd1.0', '2013-06-29 18:32:17');
-INSERT INTO commonsvrds VALUES ('2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2013-07-01 09:58:48');
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for `gameinfo`
@@ -51,12 +45,6 @@ CREATE TABLE `gameinfo` (
   PRIMARY KEY (`type`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of gameinfo
--- ----------------------------
-INSERT INTO gameinfo VALUES ('1', 'ddz', '斗地主');
-INSERT INTO gameinfo VALUES ('9', 'ld', '雷电');
 
 -- ----------------------------
 -- Table structure for `versions`
@@ -76,15 +64,7 @@ CREATE TABLE `versions` (
   KEY `commonsvrds_ver` (`commonsvrds_ver`),
   CONSTRAINT `versions_ibfk_1` FOREIGN KEY (`type`) REFERENCES `gameinfo` (`type`),
   CONSTRAINT `versions_ibfk_2` FOREIGN KEY (`commonsvrds_ver`) REFERENCES `commonsvrds` (`version`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of versions
--- ----------------------------
-INSERT INTO versions VALUES ('1', '1', 'release1.0_9527', 'release1.0_9666', 'release1.0_1022', '1', '2013-06-29 18:37:41', 'æ–—åœ°ä¸»å‡çº§ï¼Œæ·»åŠ moenyé™åˆ¶');
-INSERT INTO versions VALUES ('2', '9', '2', '2', '2', '2', '2013-07-01 09:58:21', '5555');
-INSERT INTO versions VALUES ('3', '1', '3', '3', '3', '2', '2013-07-01 10:12:24', '333333333');
-INSERT INTO versions VALUES ('4', '9', '3', '3', '3', '1', '2013-07-01 11:41:26', '4952132152861225');
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- View structure for `gamevisioninfo`

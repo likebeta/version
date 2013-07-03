@@ -3,12 +3,13 @@ require('config.inc.php');
 class MysqlDao
 {
 	private $mysql = null;
+	private $lasterror = '';
 	function __construct()
 	{
 		$this->mysql = new mysqli(DB_MYSQL_HOST,DB_MYSQL_USERNAME,DB_MYSQL_PASSWORD,DB_MYSQL_DBNAME,DB_MYSQL_PORT);
 		if ($this->mysql->connect_errno)
 		{
-			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 		}
 	}
 	function __destruct()
@@ -22,12 +23,12 @@ class MysqlDao
 	{
 		if ($this->mysql->connect_errno)
 		{
-			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 		if (!($game instanceof GameInfo)) 
 		{
-			printf("param errro\n");
+			$lasterror = sprintf("param errro\n");
 			return false;
 		}
 
@@ -35,7 +36,7 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			printf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$lasterror = sprintf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 		return true;
@@ -45,12 +46,12 @@ class MysqlDao
 	{
 		if ($this->mysql->connect_errno)
 		{
-			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 		if (!($commonsvrds instanceof CommonSvrds)) 
 		{
-			printf("param errro\n");
+			$lasterror = sprintf("param errro\n");
 			return false;
 		}
 		date_default_timezone_set('Asia/Shanghai');
@@ -60,7 +61,7 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			printf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$lasterror = sprintf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 		return true;
@@ -70,12 +71,12 @@ class MysqlDao
 	{
 		if ($this->mysql->connect_errno)
 		{
-			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 		if (!($versions instanceof Versions)) 
 		{
-			printf("param errro\n");
+			$lasterror = sprintf("param errro\n");
 			return false;
 		}
 
@@ -83,7 +84,7 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			printf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$lasterror = sprintf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 		return true;
@@ -93,7 +94,7 @@ class MysqlDao
 	{
 		if ($this->mysql->connect_errno)
 		{
-			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}	
 		
@@ -109,7 +110,7 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result)
 		{
-			printf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 
@@ -126,7 +127,7 @@ class MysqlDao
 	{
 		if ($this->mysql->connect_errno)
 		{
-			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 
@@ -134,13 +135,13 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			printf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 
 		if ($result->num_rows != 1)
 		{
-			printf("Result error: row(%d),don't exists the game(%d)\n",$result->num_rows,$gametype);
+			$lasterror = sprintf("Result error: row(%d),don't exists the game(%d)\n",$result->num_rows,$gametype);
 			return false;
 		}
 
@@ -158,7 +159,7 @@ class MysqlDao
 	{
 		if ($this->mysql->connect_errno)
 		{
-			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 
@@ -166,13 +167,13 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			printf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 
 		if ($result->num_rows != 1)
 		{
-			printf("Result error: row(%d),don't exists the game(%d) with the version(%d)\n",$result->num_rows,$gametype,$version);
+			$lasterror = sprintf("Result error: row(%d),don't exists the game(%d) with the version(%d)\n",$result->num_rows,$gametype,$version);
 			return false;
 		}
 
@@ -190,7 +191,7 @@ class MysqlDao
 	{
 		if ($this->mysql->connect_errno)
 		{
-			printf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 
@@ -198,7 +199,7 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			printf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 
@@ -214,6 +215,11 @@ class MysqlDao
 		}
 
 		return $returns;
+	}
+
+	function getLastError()
+	{
+		return $lasterror;
 	}
 }
 
