@@ -44,7 +44,7 @@
 				</thead>
 				<tbody>
 EOF;
-		foreach ($current_versions as $version) {
+		foreach ($versions as $version) {
 			$str_echo .= "<tr>";
 			$str_echo .= "<td>{$version->gameinfo->description}</td>";
 			$str_echo .= "<td>{$version->versions->time}</td>";

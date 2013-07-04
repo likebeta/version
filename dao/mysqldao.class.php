@@ -9,9 +9,10 @@ class MysqlDao
 		$this->mysql = new mysqli(DB_MYSQL_HOST,DB_MYSQL_USERNAME,DB_MYSQL_PASSWORD,DB_MYSQL_DBNAME,DB_MYSQL_PORT);
 		if ($this->mysql->connect_errno)
 		{
-			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 		}
 	}
+
 	function __destruct()
 	{
 		if (!$this->mysql->connect_errno)
@@ -19,16 +20,17 @@ class MysqlDao
 			$this->mysql->close();
 		}		
 	}
+	// 添加游戏
 	function addNewGame($game)
 	{
 		if ($this->mysql->connect_errno)
 		{
-			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 		if (!($game instanceof GameInfo)) 
 		{
-			$lasterror = sprintf("param errro\n");
+			$this->lasterror = sprintf("param errro\n");
 			return false;
 		}
 
@@ -36,22 +38,22 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			$lasterror = sprintf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$this->lasterror = sprintf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 		return true;
 	}
-
+	// 添加共用服务器版本
 	function addNewCommonSvrds($commonsvrds)
 	{
 		if ($this->mysql->connect_errno)
 		{
-			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 		if (!($commonsvrds instanceof CommonSvrds)) 
 		{
-			$lasterror = sprintf("param errro\n");
+			$this->lasterror = sprintf("param errro\n");
 			return false;
 		}
 		date_default_timezone_set('Asia/Shanghai');
@@ -61,22 +63,22 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			$lasterror = sprintf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$this->lasterror = sprintf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 		return true;
 	}
-
+	// 添加版本
 	function addNewVersions($versions)
 	{
 		if ($this->mysql->connect_errno)
 		{
-			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 		if (!($versions instanceof Versions)) 
 		{
-			$lasterror = sprintf("param errro\n");
+			$this->lasterror = sprintf("param errro\n");
 			return false;
 		}
 
@@ -84,17 +86,17 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			$lasterror = sprintf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$this->lasterror = sprintf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 		return true;
 	}
-
+	// 获取摸个游戏或者全部游戏信息
 	function getGameInfo($gametype=-1)
 	{
 		if ($this->mysql->connect_errno)
 		{
-			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}	
 		
@@ -110,7 +112,7 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result)
 		{
-			$lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$this->lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 
@@ -122,12 +124,12 @@ class MysqlDao
 		
 		return $returns;
 	}
-
+	// 获取某游戏当前版本信息
 	function getGameCurrentVersionInfo($gametype)
 	{
 		if ($this->mysql->connect_errno)
 		{
-			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 
@@ -135,13 +137,13 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			$lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$this->lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 
 		if ($result->num_rows != 1)
 		{
-			$lasterror = sprintf("Result error: row(%d),don't exists the game(%d)\n",$result->num_rows,$gametype);
+			$this->lasterror = sprintf("Result error: row(%d),don't exists the game(%d)\n",$result->num_rows,$gametype);
 			return false;
 		}
 
@@ -154,12 +156,12 @@ class MysqlDao
 
 		return new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
 	}
-
+	// 获取某游戏某个版本信息
 	function getGameThisVersionInfo($gametype,$version)
 	{
 		if ($this->mysql->connect_errno)
 		{
-			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 
@@ -167,13 +169,13 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			$lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$this->lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 
 		if ($result->num_rows != 1)
 		{
-			$lasterror = sprintf("Result error: row(%d),don't exists the game(%d) with the version(%d)\n",$result->num_rows,$gametype,$version);
+			$this->lasterror = sprintf("Result error: row(%d),don't exists the game(%d) with the version(%d)\n",$result->num_rows,$gametype,$version);
 			return false;
 		}
 
@@ -186,12 +188,12 @@ class MysqlDao
 
 		return new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
 	}
-
+	// 获取所有游戏当前版本信息
 	function getCurrentVersionInfo()
 	{
 		if ($this->mysql->connect_errno)
 		{
-			$lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
 
@@ -199,7 +201,7 @@ class MysqlDao
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
-			$lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			$this->lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
 		}
 
@@ -216,10 +218,130 @@ class MysqlDao
 
 		return $returns;
 	}
+	// 获取某游戏的版本信息
+	function getGameVersionInfoByType($gametype)
+	{
+		if ($this->mysql->connect_errno)
+		{
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			return false;
+		}
 
+		$strsql = "SELECT * FROM gamevisioninfo WHERE type=$gametype";
+		$result = $this->mysql->query($strsql);
+		if (!$result) 
+		{
+			$this->lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			return false;
+		}
+
+		$returns = array();
+		while ($row = $result->fetch_assoc())
+		{
+			$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
+			$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
+			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+			$versions->time = $row['time'];
+			$versions->version = $row['version'];
+			$returns[] = new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
+		}
+
+		return $returns;
+	}
+	// 获取某游戏的版本信息
+	function getGameVersionInfoByName($gamename)
+	{
+		if ($this->mysql->connect_errno)
+		{
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			return false;
+		}
+
+		$strsql = "SELECT * FROM gamevisioninfo WHERE name='$gamename'";
+		$result = $this->mysql->query($strsql);
+		if (!$result) 
+		{
+			$this->lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			return false;
+		}
+
+		$returns = array();
+		while ($row = $result->fetch_assoc())
+		{
+			$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
+			$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
+			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+			$versions->time = $row['time'];
+			$versions->version = $row['version'];
+			$returns[] = new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
+		}
+
+		return $returns;
+	}
+	// 获取某个版本的版本信息
+	function getGameVersionInfoByVersion($version)
+	{
+		if ($this->mysql->connect_errno)
+		{
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			return false;
+		}
+
+		$strsql = "SELECT * FROM gamevisioninfo WHERE version=$version";
+		$result = $this->mysql->query($strsql);
+		if (!$result) 
+		{
+			$this->lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			return false;
+		}
+
+		$returns = array();
+		while ($row = $result->fetch_assoc())
+		{
+			$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
+			$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
+			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+			$versions->time = $row['time'];
+			$versions->version = $row['version'];
+			$returns[] = new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
+		}
+
+		return $returns;
+	}
+	// 获取全部游戏的所有版本信息
+	function getVersionInfo()
+	{
+		if ($this->mysql->connect_errno)
+		{
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			return false;
+		}
+
+		$strsql = "SELECT * FROM gamevisioninfo ORDER BY type";
+		$result = $this->mysql->query($strsql);
+		if (!$result) 
+		{
+			$this->lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			return false;
+		}
+
+		$returns = array();
+		while ($row = $result->fetch_assoc())
+		{
+			$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
+			$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
+			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+			$versions->time = $row['time'];
+			$versions->version = $row['version'];
+			$returns[] = new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
+		}
+
+		return $returns;
+	}
+	// 获取出错原因
 	function getLastError()
 	{
-		return $lasterror;
+		return $this->lasterror;
 	}
 }
 

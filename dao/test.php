@@ -25,10 +25,11 @@ $test = new MysqlDao();
 // $versions = new Versions(1,'1.2','1.2','1.2',2,'斗地主升级，添加moeny限制');
 // $test->addNewVersions($versions);
 // $versions = new Versions(9,'1.2','1.2','1.2',2,'雷电升级，添加moeny限制');
+// $test->addNewVersions($versions);
 
-//var_dump($test->getGameInfo());
-//var_dump($test->getGameCurrentVersionInfo(1));
-//var_dump($test->getGameThisVersionInfo(1,1));
+// var_dump($test->getGameInfo());
+// var_dump($test->getGameCurrentVersionInfo(1));
+// var_dump($test->getGameThisVersionInfo(1,1));
 var_dump($test->getCurrentVersionInfo());
 ?>
 </body>
