@@ -4,6 +4,7 @@ define('DAO_DIR', ROOT_DIR.'/dao');
 define('MODEL_DIR', ROOT_DIR.'/model');
 define('VIEW_DIR', ROOT_DIR.'/view');
 define('CONTROL_DIR', ROOT_DIR.'/control');
+require_once(ROOT_DIR.'/config.inc.php');
 
 $route_params = formatRouteUrl();
 //var_dump($route_params);

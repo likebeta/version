@@ -1,21 +1,24 @@
 <?php
-require_once(DAO_DIR.'/mysqldao.class.php');
-$dao = new MysqlDao();
+$versions = false;
+if (isset($route_params['params'])) {
+	require_once(DAO_DIR.'/mysqldao.class.php');
+	$dao = new MysqlDao();
+	$page_title = '版本信息';
+	$query_version = ((string)(int)($route_params['params'][0]) === $route_params['params'][0]) ? true:false;
+	if ($query_version) {
+		$versions = $dao->getGameVersionInfoByVersion($route_params['params'][0]);
+	}
+	else {
+		$versions = $dao->getGameVersionInfoByName($route_params['params'][0]);
+	}
 
-if (!isset($route_params['params'])) {	// 查全部记录
-	$versions = $dao->getVersionInfo();
-}
-elseif (count($route_params['params']) > 1) {
-	$versions = false;
-	if ($route_params['params'][0] === 'version') {
-		$versions = $dao->getGameVersionInfoByVersion($route_params['params'][1]);
+	if ($versions === false) {
+		$page_title = 'error';
+		$error_reason = $dao->getLastError();
 	}
 }
 else {
-	$versions = $dao->getGameVersionInfoByName($route_params['params'][0]);
-}
-
-if ($versions === false) {
-	$error_reason = $dao->getLastError();
+	$page_title = 'error';
+	$error_reason = 'miss param';
 }
 ?>

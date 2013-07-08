@@ -1,12 +1,11 @@
 <?php
-require('config.inc.php');
 class MysqlDao
 {
 	private $mysql = null;
 	private $lasterror = '';
 	function __construct()
 	{
-		$this->mysql = new mysqli(DB_MYSQL_HOST,DB_MYSQL_USERNAME,DB_MYSQL_PASSWORD,DB_MYSQL_DBNAME,DB_MYSQL_PORT);
+		$this->mysql = new mysqli($_ENV['DB_MYSQL_HOST'],$_ENV['DB_MYSQL_USERNAME'],$_ENV['DB_MYSQL_PASSWORD'],$_ENV['DB_MYSQL_DBNAME'],$_ENV['DB_MYSQL_PORT']);
 		if ($this->mysql->connect_errno)
 		{
 			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);

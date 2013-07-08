@@ -10,7 +10,7 @@
 <script src="http://localhost/lib/bootstrap/2.3.1/js/bootstrap.min.js"></script>
 <link href="http://localhost/lib/bootstrap/2.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen" />
 <link href="http://localhost/lib/bootstrap/2.3.1/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen" />
-<title>游戏信息</title>
+<title><?php echo $page_title;?></title>
 </head>
 <body>
 <?php
@@ -48,6 +48,9 @@ EOF;
 EOF;
 		echo $str_echo;
 	}
+?>
+<?php
+	require_once('nav.php');
 ?>
 </body>
 </html>
