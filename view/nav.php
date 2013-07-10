@@ -6,5 +6,6 @@
 		<li><a href="/version/query/ddz">斗地主版本历史</a></li>
 		<li><a href="/version/query/1">版本1</a></li>
 		<li><a href="/game/add">添加游戏</a></li>
+		<li><a href="/version/add">添加版本</a></li>
 	</ul>
 </div>

@@ -19,6 +19,43 @@ class MysqlDao
 			$this->mysql->close();
 		}		
 	}
+
+	function begin()
+	{
+		if ($this->mysql->connect_errno)
+		{
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			return false;
+		}
+
+		$this->mysql->query('BEGIN');
+		return true;
+	}
+
+	function commit()
+	{
+		if ($this->mysql->connect_errno)
+		{
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			return false;
+		}
+
+		$this->mysql->query('COMMIT');
+		return true;
+	}
+
+	function rollback()
+	{
+		if ($this->mysql->connect_errno)
+		{
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			return false;
+		}
+
+		$this->mysql->query('ROLLBACK');
+		return true;
+	}
+
 	// 添加游戏
 	function addNewGame($game)
 	{
@@ -27,7 +64,7 @@ class MysqlDao
 			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
 			return false;
 		}
-		if (!($game instanceof GameInfo)) 
+		if (!($game instanceof GameInfo))
 		{
 			$this->lasterror = sprintf("param errro\n");
 			return false;
@@ -81,6 +118,17 @@ class MysqlDao
 			return false;
 		}
 
+		$strsql = "SELECT MAX(version) version FROM commonsvrds;";
+		$result = $this->mysql->query($strsql);
+		if (!$result)
+		{
+			$this->lasterror = sprintf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			return false;
+		}
+
+		$row = $result->fetch_assoc();
+		$versions->version = $row['version'];
+
 		$strsql = "INSERT INTO versions VALUES(NULL,$versions->type,'$versions->so','$versions->gamesvrd','$versions->client',$versions->commonsvrds_ver,'$versions->time','$versions->comment')";
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
@@ -118,11 +166,37 @@ class MysqlDao
 		$returns = array();
 		while ($row = $result->fetch_assoc())
 		{
-			$returns[] = new gameinfo($row['type'],$row['name'],$row['description']);
+			$returns[] = new GameInfo($row['type'],$row['name'],$row['description']);
 		}
 		
 		return $returns;
 	}
+	// 获取当前通用服务器版本信息
+	function getCurrentCommonsvrdVersionInfo()
+	{
+		if ($this->mysql->connect_errno)
+		{
+			$this->lasterror = sprintf("Connect Error (%s) : %s\n",$this->mysql->connect_errno,$this->mysql->connect_error);
+			return false;
+		}
+
+		$strsql = "SELECT * FROM commonsvrds ORDER BY time DESC  LIMIT 1";
+		$result = $this->mysql->query($strsql);
+		if (!$result) 
+		{
+			$this->lasterror = sprintf("Query failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
+			return false;
+		}
+
+		if ($result->num_rows != 1)
+		{
+			return true;
+		}
+
+		$row = $result->fetch_assoc();
+		return new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
+	}
+
 	// 获取某游戏当前版本信息
 	function getGameCurrentVersionInfo($gametype)
 	{
@@ -142,14 +216,14 @@ class MysqlDao
 
 		if ($result->num_rows != 1)
 		{
-			$this->lasterror = sprintf("Result error: row(%d),don't exists the game(%d)\n",$result->num_rows,$gametype);
-			return false;
+			return true;
 		}
 
 		$row = $result->fetch_assoc();
 		$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
 		$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
-		$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+		$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['comment']);
+		$versions->version = $row['commonsvrds_ver'];
 		$versions->time = $row['time'];
 		$versions->version = $row['version'];
 
@@ -174,15 +248,15 @@ class MysqlDao
 
 		if ($result->num_rows != 1)
 		{
-			$this->lasterror = sprintf("Result error: row(%d),don't exists the game(%d) with the version(%d)\n",$result->num_rows,$gametype,$version);
-			return false;
+			return true;
 		}
 
 		$row = $result->fetch_assoc();
 		$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
 		$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
-		$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+		$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['comment']);
 		$versions->time = $row['time'];
+		$versions->version = $row['commonsvrds_ver'];
 		$versions->version = $row['version'];
 
 		return new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
@@ -209,8 +283,9 @@ class MysqlDao
 		{
 			$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
 			$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
-			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['comment']);
 			$versions->time = $row['time'];
+			$versions->version = $row['commonsvrds_ver'];
 			$versions->version = $row['version'];
 			$returns[] = new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
 		}
@@ -239,8 +314,9 @@ class MysqlDao
 		{
 			$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
 			$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
-			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['comment']);
 			$versions->time = $row['time'];
+			$versions->version = $row['commonsvrds_ver'];
 			$versions->version = $row['version'];
 			$returns[] = new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
 		}
@@ -269,8 +345,9 @@ class MysqlDao
 		{
 			$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
 			$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
-			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['comment']);
 			$versions->time = $row['time'];
+			$versions->version = $row['commonsvrds_ver'];
 			$versions->version = $row['version'];
 			$returns[] = new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
 		}
@@ -299,8 +376,9 @@ class MysqlDao
 		{
 			$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
 			$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
-			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['comment']);
 			$versions->time = $row['time'];
+			$versions->version = $row['commonsvrds_ver'];
 			$versions->version = $row['version'];
 			$returns[] = new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
 		}
@@ -329,8 +407,9 @@ class MysqlDao
 		{
 			$gameinfo = new GameInfo($row['type'],$row['name'],$row['description']);
 			$commonsvrds = new CommonSvrds($row['adminsvrd'],$row['dbsvrd'],$row['friendsvrd'],$row['logsvrd'],$row['propertysvrd'],$row['proxysvrd'],$row['roommngsvrd'],$row['shopsvrd'],$row['statsvrd'],$row['websvrd']);
-			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['commonsvrds_ver'],$row['comment']);
+			$versions = new Versions($row['type'],$row['so'],$row['gamesvrd'],$row['client'],$row['comment']);
 			$versions->time = $row['time'];
+			$versions->version = $row['commonsvrds_ver'];
 			$versions->version = $row['version'];
 			$returns[] = new GameCurrentVersionInfo($gameinfo,$commonsvrds,$versions);
 		}
@@ -406,14 +485,15 @@ class Versions
 	public $commonsvrds_ver;
 	public $time;
 	public $comment;
-	function __construct($type,$so,$gamesvrd,$client,$commonsvrds_ver,$comment)
+	function __construct($type,$so,$gamesvrd,$client,$comment)
 	{
 		$this->version = -1;
 		$this->type = $type;
 		$this->so = $so;
 		$this->gamesvrd = $gamesvrd;
 		$this->client = $client;
-		$this->commonsvrds_ver = $commonsvrds_ver;
+//		$this->commonsvrds_ver = $commonsvrds_ver;
+		$this->commonsvrds_ver = -1;
 		date_default_timezone_set('Asia/Shanghai');
 		$this->time = date("Y-m-d H:i:s");
 		$this->comment = $comment;
