@@ -20,6 +20,12 @@ class MysqlDao
 		}		
 	}
 
+	// 获取出错原因
+	function getLastError()
+	{
+		return $this->lasterror;
+	}
+
 	function begin()
 	{
 		if ($this->mysql->connect_errno)
@@ -41,6 +47,7 @@ class MysqlDao
 		}
 
 		$this->mysql->query('COMMIT');
+		$this->mysql->query('END');
 		return true;
 	}
 
@@ -53,6 +60,7 @@ class MysqlDao
 		}
 
 		$this->mysql->query('ROLLBACK');
+		$this->mysql->query('END');
 		return true;
 	}
 
@@ -97,7 +105,7 @@ class MysqlDao
 		$strsql = "INSERT INTO commonsvrds VALUES(NULL,'$commonsvrds->adminsvrd','$commonsvrds->dbsvrd','$commonsvrds->friendsvrd','$commonsvrds->logsvrd','$commonsvrds->propertysvrd','$commonsvrds->proxysvrd','$commonsvrds->roommngsvrd','$commonsvrds->shopsvrd','$commonsvrds->statsvrd','$commonsvrds->websvrd','$time')";
 
 		$result = $this->mysql->query($strsql);
-		if (!$result) 
+		if (!$result)
 		{
 			$this->lasterror = sprintf("Add failed(%s): %s\n",$this->mysql->errno,$this->mysql->error);
 			return false;
@@ -127,9 +135,9 @@ class MysqlDao
 		}
 
 		$row = $result->fetch_assoc();
-		$versions->version = $row['version'];
+		$versions->commonsvrds_ver = $row['version'];
 
-		$strsql = "INSERT INTO versions VALUES(NULL,$versions->type,'$versions->so','$versions->gamesvrd','$versions->client',$versions->commonsvrds_ver,'$versions->time','$versions->comment')";
+		$strsql = "INSERT INTO versions VALUES(NULL,$versions->type,'$versions->so','$versions->gamesvrd','$versions->client',$versions->commonsvrds_ver,'$versions->time','$versions->comment')";	
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
@@ -301,7 +309,7 @@ class MysqlDao
 			return false;
 		}
 
-		$strsql = "SELECT * FROM gamevisioninfo WHERE type=$gametype";
+		$strsql = "SELECT * FROM gamevisioninfo WHERE type=$gametype ORDER BY version DESC";
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
@@ -332,7 +340,7 @@ class MysqlDao
 			return false;
 		}
 
-		$strsql = "SELECT * FROM gamevisioninfo WHERE name='$gamename'";
+		$strsql = "SELECT * FROM gamevisioninfo WHERE name='$gamename' ORDER BY version DESC";
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
@@ -394,7 +402,7 @@ class MysqlDao
 			return false;
 		}
 
-		$strsql = "SELECT * FROM gamevisioninfo ORDER BY type";
+		$strsql = "SELECT * FROM gamevisioninfo ORDER BY type,version DESC";
 		$result = $this->mysql->query($strsql);
 		if (!$result) 
 		{
@@ -415,11 +423,6 @@ class MysqlDao
 		}
 
 		return $returns;
-	}
-	// 获取出错原因
-	function getLastError()
-	{
-		return $this->lasterror;
 	}
 }
 

@@ -28,6 +28,8 @@ require_once(CONTROL_DIR.'/'.$controler.'.php');
 function formatRouteUrl()
 {
 	$request_url = $_SERVER['REQUEST_URI'];
+	$tmp_array = explode('?', $request_url);
+	$request_url = $tmp_array[0];
 	$tmp_array = explode('/',$request_url);
 	for ($i = count($tmp_array)-1; $i >=0 ; $i--) { 
 		if (empty($tmp_array[$i]))
@@ -37,6 +39,7 @@ function formatRouteUrl()
 	}
 	$tmp_array = array_values($tmp_array);
 	$count = count($tmp_array);
+
 	$route_params = array();
 	if ($count > 0) {
 		$route_params['model'] = $tmp_array[0];

@@ -1,14 +1,14 @@
 <?php
 if (!defined('VIEW_DIR')) {
-	$error_reason = 'illegal request';
+	define('ERROR_REASON', '非法请求');
 }
 else {
 	$params_count = count($route_params);
 	if ($params_count === 0) {
-		$error_reason = 'miss param';
+		define('ERROR_REASON', '缺少参数');
 	}
 	else {
-		$error_reason = 'error param';
-	}	
+		define('ERROR_REASON', '参数错误');
+	}
 }
 ?>

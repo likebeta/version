@@ -5,10 +5,21 @@ if (isset($_POST['games']) && isset($_POST['svrds'])) {
 	$version_helper = new VersionHelper($_POST['games'],$_POST['svrds']);
 	if ($version_helper->addNewVersions()) {
 		$add_result = '添加成功';
+		$success = "success";
 	}
 	else {
-		$add_result = $version_helper->getLastError();
+		$add_result = '添加失败,'.$version_helper->getLastError();
+		$success = "error";
 	}
+
+	header('Content-type: text/json');
+	$json = array(
+	    "result"  => $success,
+	    "desc" => $add_result
+	);
+
+	echo json_encode($json);
+	die();
 }
 
 /**
@@ -39,28 +50,31 @@ class VersionHelper
 			}
 		}
 
-		foreach ($this->commonsvrds as $commonsvrd) {
-			if (!isset($commonsvrd->name) || !isset($commonsvrd->version)) {
+		foreach ($this->svrds as $svrd) {
+			if (!isset($svrd->name) || !isset($svrd->version)) {
 				return false;
 			}
 		}
+
 
 		return true;
 	}
 
 	private function isHaveRepeat()
 	{
-		foreach ($this->games as $game) {
-			foreach ($this->games as $inner_game) {
-				if ($game->name == $inner_game->name) {
+		$count = count($this->games);
+		for ($i = 0; $i < $count; $i++) { 
+			for ($j = $i + 1; $j < $count; $j++) { 
+				if ($this->games[$i] == $this->games[$j]) {
 					return false;
 				}
 			}
 		}
 
-		foreach ($this->svrds as $svrd) {
-			foreach ($this->svrds as $inner_svrd) {
-				if ($svrd->name == $inner_svrd->name) {
+		$count = count($this->svrds);
+		for ($i = 0; $i < $count; $i++) { 
+			for ($j = $i + 1; $j < $count; $j++) { 
+				if ($this->svrds[$i] == $this->svrds[$j]) {
 					return false;
 				}
 			}
@@ -73,8 +87,8 @@ class VersionHelper
 	{
 		foreach ($this->games as $gameversion) {
 			foreach ($current_versions as $version) {
-				if ($version->name == $gameversion->name) {
-					if ($gameversion->so == $version->so && $gameversion->client == $version->client && $gameversion->gamesvrd == $version->gamesvrd) {
+				if ($version->gameinfo->name == $gameversion->name) {
+					if ($gameversion->so == $version->versions->so && $gameversion->client == $version->versions->client && $gameversion->gamesvrd == $version->versions->gamesvrd) {
 						return true;
 					}
 				}
@@ -130,7 +144,7 @@ class VersionHelper
 			return false;
 		}
 
-		// 检查共用数据库是否合法
+		// 检查共用服务器是否合法
 		$no_commsvrds_update = count($this->svrds) ? false:true;
 		if (!$no_commsvrds_update) {
 			foreach ($this->svrds as $svrd) {
@@ -153,7 +167,7 @@ class VersionHelper
 					}
 				}
 				if (!$find) {
-					$this->error = 'the game '.$svrd->name.' is not exists,please add first';
+					$this->error = 'the game '.$game->name.' is not exists,please add first';
 					return false;
 				}
 			}
@@ -169,10 +183,10 @@ class VersionHelper
 		if (!$no_commsvrds_update) {		// 有公共服务器升级
 			if ($current_svrds !== true) {	// 不是第一次,需要检查版本是否真的有变动
 				$have_diff = false;
-				foreach ($this->games as $game) {
-					if ($game->version != $current_svrds->{$game->name}) {
+				foreach ($this->svrds as $svrd) {
+					if ($svrd->version != $current_svrds->{$svrd->name}) {
 						$have_diff = true;
-						$current_svrds->{$game->name} = $game->version;
+						$current_svrds->{$svrd->name} = $svrd->version;
 					}
 				}
 				if (!$have_diff) {
@@ -181,8 +195,8 @@ class VersionHelper
 				}
 			}
 			else {
-				foreach ($this->games as $game) {
-					$current_svrds->{$game->name} = $game->version;
+				foreach ($this->games as $svrd) {
+					$current_svrds->{$svrd->name} = $svrd->version;
 				}
 			}
 		}
@@ -203,8 +217,8 @@ class VersionHelper
 
 		if (!$no_commsvrds_update) { // 如果有公共服务器升级则所有游戏都要升级
 			foreach ($current_versions as $current_version) {
-				if (!isset($new_versions[$current_version->name])) {
-					$new_versions[$game->name] = new Versions($current_version->type,$current_version->so,$current_version->gamesvrd,$current_version->client,'共用服务器升级');
+				if (!isset($new_versions[$current_version->gameinfo->name])) {
+					$new_versions[$current_version->gameinfo->name] = new Versions($current_version->gameinfo->type,$current_version->versions->so,$current_version->versions->gamesvrd,$current_version->versions->client,'because of commonsvrds update');
 				}
 			}
 		}

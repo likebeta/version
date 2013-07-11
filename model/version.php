@@ -1,11 +1,10 @@
 <?php
 require_once(DAO_DIR.'/mysqldao.class.php');
 $dao = new MysqlDao();
-$page_title = '版本历史';
 $versions = $dao->getVersionInfo();
-
 if ($versions === false) {
-	$page_title = 'error';
-	$error_reason = $dao->getLastError();
+	define('CALL_ERROR_VIEW', true);
+	define('ERROR_TITLE', '数据库错误');
+	define('ERROR_REASON', $dao->getLastError());
 }
 ?>

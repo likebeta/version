@@ -10,15 +10,9 @@
 <script src="http://localhost/lib/bootstrap/2.3.1/js/bootstrap.min.js"></script>
 <link href="http://localhost/lib/bootstrap/2.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen" />
 <link href="http://localhost/lib/bootstrap/2.3.1/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen" />
-<title><?php echo $page_title;?></title>
+<title>游戏信息</title>
 </head>
 <body>
-<?php
-	if (isset($error_reason)) {
-		echo $error_reason;
-	}
-	else {
-		$str_echo = <<<EOF
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span12">
@@ -31,24 +25,22 @@
 					</tr>
 				</thead>
 				<tbody>
-EOF;
-		foreach ($gameinfos as $gameinfo) {
-			$str_echo .= "<tr>";
-			$str_echo .= "<td>{$gameinfo->type}</td>";
-			$str_echo .= "<td>{$gameinfo->name}</td>";
-			$str_echo .= "<td>{$gameinfo->description}</td>";
-			$str_echo .= "</tr>";
-		}
-		$str_echo .= <<<EOF
+<?php
+				$str_echo = '';
+				foreach ($gameinfos as $gameinfo) {
+					$str_echo .= "<tr>";
+					$str_echo .= "<td>{$gameinfo->type}</td>";
+					$str_echo .= "<td>{$gameinfo->name}</td>";
+					$str_echo .= "<td>{$gameinfo->description}</td>";
+					$str_echo .= "</tr>";
+				}
+				echo $str_echo;
+?>
 				</tbody>
 			</table>
 		</div>
 	</div>
 </div>
-EOF;
-		echo $str_echo;
-	}
-?>
 <?php
 	require_once('nav.php');
 ?>

@@ -13,12 +13,6 @@
 <title><?php echo $page_title;?></title>
 </head>
 <body>
-<?php
-	if (isset($error_reason)) {
-		echo $error_reason;
-	}
-	else {
-		$str_echo = <<<EOF
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span12">
@@ -43,36 +37,34 @@
 					</tr>
 				</thead>
 				<tbody>
-EOF;
-		foreach ($versions as $version) {
-			$str_echo .= "<tr>";
-			$str_echo .= "<td>{$version->gameinfo->description}</td>";
-			$str_echo .= "<td>{$version->versions->time}</td>";
-			$str_echo .= "<td>{$version->versions->client}</td>";
-			$str_echo .= "<td>{$version->versions->so}</td>";
-			$str_echo .= "<td>{$version->versions->gamesvrd}</td>";
-			$str_echo .= "<td>{$version->commonsvrds->adminsvrd}</td>";
-			$str_echo .= "<td>{$version->commonsvrds->dbsvrd}</td>";
-			$str_echo .= "<td>{$version->commonsvrds->friendsvrd}</td>";
-			$str_echo .= "<td>{$version->commonsvrds->logsvrd}</td>";
-			$str_echo .= "<td>{$version->commonsvrds->propertysvrd}</td>";
-			$str_echo .= "<td>{$version->commonsvrds->proxysvrd}</td>";
-			$str_echo .= "<td>{$version->commonsvrds->roommngsvrd}</td>";
-			$str_echo .= "<td>{$version->commonsvrds->shopsvrd}</td>";
-			$str_echo .= "<td>{$version->commonsvrds->statsvrd}</td>";
-			$str_echo .= "<td>{$version->commonsvrds->websvrd}</td>";
-			$str_echo .= "</tr>";
-		}
-		$str_echo .= <<<EOF
+<?php
+				$str_echo = '';
+				foreach ($versions as $version) {
+					$str_echo .= "<tr>";
+					$str_echo .= "<td>{$version->gameinfo->description}</td>";
+					$str_echo .= "<td>{$version->versions->time}</td>";
+					$str_echo .= "<td>{$version->versions->client}</td>";
+					$str_echo .= "<td>{$version->versions->so}</td>";
+					$str_echo .= "<td>{$version->versions->gamesvrd}</td>";
+					$str_echo .= "<td>{$version->commonsvrds->adminsvrd}</td>";
+					$str_echo .= "<td>{$version->commonsvrds->dbsvrd}</td>";
+					$str_echo .= "<td>{$version->commonsvrds->friendsvrd}</td>";
+					$str_echo .= "<td>{$version->commonsvrds->logsvrd}</td>";
+					$str_echo .= "<td>{$version->commonsvrds->propertysvrd}</td>";
+					$str_echo .= "<td>{$version->commonsvrds->proxysvrd}</td>";
+					$str_echo .= "<td>{$version->commonsvrds->roommngsvrd}</td>";
+					$str_echo .= "<td>{$version->commonsvrds->shopsvrd}</td>";
+					$str_echo .= "<td>{$version->commonsvrds->statsvrd}</td>";
+					$str_echo .= "<td>{$version->commonsvrds->websvrd}</td>";
+					$str_echo .= "</tr>";
+				}
+				echo $str_echo;
+?>
 				</tbody>
 			</table>
 		</div>
 	</div>
 </div>
-EOF;
-		echo $str_echo;
-	}
-?>
 <?php
 	require_once('nav.php');
 ?>

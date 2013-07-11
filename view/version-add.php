@@ -8,6 +8,8 @@
 <![endif]-->
 <script src="http://localhost/lib/jquery/1.9.1/jquery.min.js"></script>
 <script src="http://localhost/lib/bootstrap/2.3.1/js/bootstrap.min.js"></script>
+<script src="http://localhost/lib/dump/1.1/jquery.dump.js"></script>
+<script src="http://localhost/lib/dump/1.1/dump.js"></script>
 <link href="http://localhost/lib/bootstrap/2.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen" />
 <link href="http://localhost/lib/bootstrap/2.3.1/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen" />
 <title><?php echo $page_title;?></title>
@@ -31,23 +33,6 @@ fieldset {
 </style>
 </head>
 <body>
-<?php
-
-if (isset($_POST['games']) && isset($_POST['svrds'])) {
-	$games = json_decode($_POST['games']);
-	$svrds = json_decode($_POST['svrds']);
-	var_dump($_POST);
-	var_dump($games);
-	var_dump($svrds);
-	exit();
-}
-
-
-	if (isset($error_reason)) {
-		echo $error_reason;
-	}
-	else {
-		?>
 <div class="container-fluid">
 	<div class="row-fluid" id="game-update">
 		<div class="span12">
@@ -129,18 +114,20 @@ if (isset($_POST['games']) && isset($_POST['svrds'])) {
 	<div class="well well-small">
 		<button type="button" class="close" data-dismiss="alert">×</button>
 		<span>斗地主</span>
-
 	</div>
-	<form id="test" method="post" action="./add">
-		<input type="hidden" name="games" />
-		<input type="hidden" name="svrds" />		
-	</form>
+	<div id="tip"></div>
 </div>
 <?php
-	}
-?>
-<?php
-	require_once('nav.php');
+require_once('nav.php');
+
+// if (isset($_POST['games']) && isset($_POST['svrds'])) {
+// 	$games = json_decode($_POST['games']);
+// 	$svrds = json_decode($_POST['svrds']);
+// 	var_dump($_POST);
+// 	var_dump($games);
+// 	var_dump($svrds);
+// 	exit();
+// }
 ?>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -165,6 +152,21 @@ $(document).ready(function(){
 		var gamesvrd = $('#gamesvrd').val();
 		$('#modal-container-games').modal('hide');
 	});
+
+
+	var games=[];
+	var commonsvrds=[];
+	games.push({"name": "ddz","so": "1.5","client": "1.3","gamesvrd": "1.6","comment": "fuck you"});
+	games.push({"name": "llk","so": "1.2","client": "1.6","gamesvrd": "1.7","comment": "fuck you"});
+	commonsvrds.push({"name": "dbsvrd","version": "2.3"});
+	commonsvrds.push({"name": "proxysvrd","version": "3.3"});
+
+	var form = new Object();
+	form.games = JSON.stringify(games);
+	form.svrds = JSON.stringify(commonsvrds);
+	$.post('./add',form,function(data){
+		$('#tip').html(makeTip(data.desc,data.result));
+	},'json');
 });
 
 function getSelectedText(id){
@@ -174,20 +176,14 @@ function getSelectedText(id){
 function setSelectedText(id,value){
 	return $(id + ' .dropdown-toggle')[0].firstChild.nodeValue = value;
 }
-</script>
 
-<script type="text/javascript">
-	var games=[];
-	var commonsvrds=[];
-	games.push({"name": "ddz","so": "1.5","client": "1.3","gamesvrd": "1.6","comment": "fuck you"});
-	games.push({"name": "llk","so": "1.2","client": "1.6","gamesvrd": "1.7","comment": "fuck you"});
-	commonsvrds.push({"name": "dbsvrd","version": "2.3"});
-	commonsvrds.push({"name": "proxysvrd","version": "3.3"});
-
-	var form = document.getElementById("test");
-	form.games.value = JSON.stringify(games);
-	form.svrds.value = JSON.stringify(commonsvrds);	
-	form.submit();
+function makeTip(text,classname){
+	var html = '<div class="alert alert-' + classname + '">';
+	html += '<button type="button" class="close" data-dismiss="alert">×</button>';
+	html += '' + text + '';
+	html += '</div>';
+	return html;
+}
 </script>
 </body>
 </html>
