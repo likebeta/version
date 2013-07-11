@@ -2,17 +2,15 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--[if lt IE 9]>
-<script src="http://localhost/lib/html5/html5shiv.js"></script>
-<![endif]-->
-<script src="http://localhost/lib/jquery/1.9.1/jquery.min.js"></script>
-<script src="http://localhost/lib/bootstrap/2.3.1/js/bootstrap.min.js"></script>
-<link href="http://localhost/lib/bootstrap/2.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen" />
-<link href="http://localhost/lib/bootstrap/2.3.1/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen" />
+<?php 
+	require_once(VIEW_DIR.'/header.php');
+?>
 <title><?php echo $page_title;?></title>
 </head>
 <body>
+<?php
+	require_once(VIEW_DIR.'/nav.php');
+?>
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span12">
@@ -65,8 +63,5 @@
 		</div>
 	</div>
 </div>
-<?php
-	require_once('nav.php');
-?>
 </body>
 </html>

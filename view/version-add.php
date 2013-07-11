@@ -2,16 +2,9 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--[if lt IE 9]>
-<script src="http://localhost/lib/html5/html5shiv.js"></script>
-<![endif]-->
-<script src="http://localhost/lib/jquery/1.9.1/jquery.min.js"></script>
-<script src="http://localhost/lib/bootstrap/2.3.1/js/bootstrap.min.js"></script>
-<script src="http://localhost/lib/dump/1.1/jquery.dump.js"></script>
-<script src="http://localhost/lib/dump/1.1/dump.js"></script>
-<link href="http://localhost/lib/bootstrap/2.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen" />
-<link href="http://localhost/lib/bootstrap/2.3.1/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen" />
+<?php 
+	require_once(VIEW_DIR.'/header.php');
+?>
 <title><?php echo $page_title;?></title>
 <style type="text/css">
 /*label {
@@ -33,6 +26,9 @@ fieldset {
 </style>
 </head>
 <body>
+<?php
+	require_once(VIEW_DIR.'/nav.php');
+?>
 <div class="container-fluid">
 	<div class="row-fluid" id="game-update">
 		<div class="span12">
@@ -118,8 +114,6 @@ fieldset {
 	<div id="tip"></div>
 </div>
 <?php
-require_once('nav.php');
-
 // if (isset($_POST['games']) && isset($_POST['svrds'])) {
 // 	$games = json_decode($_POST['games']);
 // 	$svrds = json_decode($_POST['svrds']);
