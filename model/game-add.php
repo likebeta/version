@@ -5,11 +5,11 @@ if (isset($_POST['gametype']) && isset($_POST['gamename']) && isset($_POST['game
 		$value_error = ' 游戏类型';
 	}
 
-	if (!preg_match('/^[1-9a-zA-Z]+$/', $_POST['gamename'])) {
+	if (!preg_match('/^[0-9a-zA-Z]+$/', $_POST['gamename'])) {
 		$value_error .= ' 游戏缩写';
 	}
 
-	if (!preg_match('/^.+$/', $_POST['gamedesc'])) {
+	if (!preg_match('/^\S+$/', $_POST['gamedesc'])) {
 		$value_error .= ' 游戏名称';
 	}
 

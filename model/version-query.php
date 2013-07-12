@@ -3,7 +3,7 @@ $versions = false;
 if (isset($route_params['params'])) {
 	require_once(DAO_DIR.'/mysqldao.class.php');
 	$dao = new MysqlDao();
-	$versions = $dao->getGameVersionInfoByName($route_params['params'][0]);
+	$versions = $dao->getGameVersionsInfoByName($route_params['params'][0]);
 	if ($versions === false) {
 		define('CALL_ERROR_VIEW', true);
 		define('ERROR_TITLE', '数据库错误');

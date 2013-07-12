@@ -44,16 +44,16 @@
 					$str_echo .= "<td>{$version->versions->client}</td>";
 					$str_echo .= "<td>{$version->versions->so}</td>";
 					$str_echo .= "<td>{$version->versions->gamesvrd}</td>";
-					$str_echo .= "<td>{$version->commonsvrds->adminsvrd}</td>";
-					$str_echo .= "<td>{$version->commonsvrds->dbsvrd}</td>";
-					$str_echo .= "<td>{$version->commonsvrds->friendsvrd}</td>";
-					$str_echo .= "<td>{$version->commonsvrds->logsvrd}</td>";
-					$str_echo .= "<td>{$version->commonsvrds->propertysvrd}</td>";
-					$str_echo .= "<td>{$version->commonsvrds->proxysvrd}</td>";
-					$str_echo .= "<td>{$version->commonsvrds->roommngsvrd}</td>";
-					$str_echo .= "<td>{$version->commonsvrds->shopsvrd}</td>";
-					$str_echo .= "<td>{$version->commonsvrds->statsvrd}</td>";
-					$str_echo .= "<td>{$version->commonsvrds->websvrd}</td>";
+					$str_echo .= "<td>{$version->basesvrds->adminsvrd}</td>";
+					$str_echo .= "<td>{$version->basesvrds->dbsvrd}</td>";
+					$str_echo .= "<td>{$version->basesvrds->friendsvrd}</td>";
+					$str_echo .= "<td>{$version->basesvrds->logsvrd}</td>";
+					$str_echo .= "<td>{$version->basesvrds->propertysvrd}</td>";
+					$str_echo .= "<td>{$version->basesvrds->proxysvrd}</td>";
+					$str_echo .= "<td>{$version->basesvrds->roommngsvrd}</td>";
+					$str_echo .= "<td>{$version->basesvrds->shopsvrd}</td>";
+					$str_echo .= "<td>{$version->basesvrds->statsvrd}</td>";
+					$str_echo .= "<td>{$version->basesvrds->websvrd}</td>";
 					$str_echo .= "</tr>";
 				}
 				echo $str_echo;

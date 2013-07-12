@@ -1,8 +1,8 @@
 <?php
 require_once(DAO_DIR.'/mysqldao.class.php');
 $page_title = '上线版本';
-if (isset($_POST['games']) && isset($_POST['svrds'])) {
-	$version_helper = new VersionHelper($_POST['games'],$_POST['svrds']);
+if (isset($_POST['games']) && isset($_POST['basesvrds'])) {
+	$version_helper = new VersionHelper($_POST['games'],$_POST['basesvrds']);
 	if ($version_helper->addNewVersions()) {
 		$add_result = '添加成功';
 		$success = "success";
@@ -28,13 +28,13 @@ if (isset($_POST['games']) && isset($_POST['svrds'])) {
 class VersionHelper
 {
 	private $games;
-	private $svrds;
+	private $basesvrds;
 	private $error = '';
 	private $commonsvrds = array('adminsvrd','dbsvrd','friendsvrd','logsvrd','propertysvrd','proxysvrd','roommngsvrd','shopsvrd','statsvrd','websvrd');
-	function __construct($json_games,$json_svrds)
+	function __construct($json_games,$json_basesvrds)
 	{
 		$this->games = json_decode($json_games);
-		$this->svrds = json_decode($json_svrds);
+		$this->basesvrds = json_decode($json_basesvrds);
 	}
 
 	function getLastError()
@@ -50,8 +50,8 @@ class VersionHelper
 			}
 		}
 
-		foreach ($this->svrds as $svrd) {
-			if (!isset($svrd->name) || !isset($svrd->version)) {
+		foreach ($this->basesvrds as $basesvrd) {
+			if (!isset($basesvrd->name) || !isset($basesvrd->version)) {
 				return false;
 			}
 		}
@@ -71,10 +71,10 @@ class VersionHelper
 			}
 		}
 
-		$count = count($this->svrds);
+		$count = count($this->basesvrds);
 		for ($i = 0; $i < $count; $i++) { 
 			for ($j = $i + 1; $j < $count; $j++) { 
-				if ($this->svrds[$i] == $this->svrds[$j]) {
+				if ($this->basesvrds[$i] == $this->basesvrds[$j]) {
 					return false;
 				}
 			}
@@ -111,13 +111,13 @@ class VersionHelper
 
 	function addNewVersions()
 	{
-		if ($this->games === false || $this->svrds === false)
+		if ($this->games === false || $this->basesvrds === false)
 		{
 			$this->error = 'json data error';
 			return false;
 		}
 
-		if (count($this->games) <= 0 && count($this->svrds) <= 0) {
+		if (count($this->games) <= 0 && count($this->basesvrds) <= 0) {
 			$this->error = 'no update';
 			return false;
 		}
@@ -136,20 +136,20 @@ class VersionHelper
 
 		$dao = new MysqlDao();
 		$gamesinfo = $dao->getGameInfo();
-		$current_svrds = $dao->getCurrentCommonsvrdVersionInfo();
-		$current_versions = $dao->getCurrentVersionInfo();
+		$current_svrds = $dao->getCurrentBasesvrdsVersionInfo();
+		$current_versions = $dao->getCurrentVersionsInfo();
 
 		if ($current_versions === false || $current_svrds === false || $gamesinfo === false) {
 			$this->error = $dao->getLastError();
 			return false;
 		}
 
-		// 检查共用服务器是否合法
-		$no_commsvrds_update = count($this->svrds) ? false:true;
+		// 检查基础服务器是否合法
+		$no_commsvrds_update = count($this->basesvrds) ? false:true;
 		if (!$no_commsvrds_update) {
-			foreach ($this->svrds as $svrd) {
-				if (!in_array($svrd->name, $this->commonsvrds)) {
-					$this->error = 'the server '.$svrd->name.' is not exists,please add first';
+			foreach ($this->basesvrds as $basesvrd) {
+				if (!in_array($basesvrd->name, $this->commonsvrds)) {
+					$this->error = 'the server '.$basesvrd->name.' is not exists,please add first';
 					return false;
 				}
 			}
@@ -173,30 +173,30 @@ class VersionHelper
 			}
 		}
 
-		// 第一次需要检查公共服务器的数据是否齐全
-		if ($current_svrds === true && count($svrds) != count($this->commonsvrds)) {
-			$this->error = '第一次需要填写所有共用服务器的版本号';
+		// 第一次需要检查基础服务器的数据是否齐全
+		if ($current_svrds === true && count($basesvrds) != count($this->commonsvrds)) {
+			$this->error = '第一次需要填写所有基础服务器的版本号';
 			return false;
 		}
 
-		// 构建添加公共服务器记录
-		if (!$no_commsvrds_update) {		// 有公共服务器升级
+		// 构建添加基础服务器记录
+		if (!$no_commsvrds_update) {		// 有基础服务器升级
 			if ($current_svrds !== true) {	// 不是第一次,需要检查版本是否真的有变动
 				$have_diff = false;
-				foreach ($this->svrds as $svrd) {
-					if ($svrd->version != $current_svrds->{$svrd->name}) {
+				foreach ($this->basesvrds as $basesvrd) {
+					if ($basesvrd->version != $current_svrds->{$basesvrd->name}) {
 						$have_diff = true;
-						$current_svrds->{$svrd->name} = $svrd->version;
+						$current_svrds->{$basesvrd->name} = $basesvrd->version;
 					}
 				}
 				if (!$have_diff) {
-					$this->error = '非法请求,公共服务器没有变动';
+					$this->error = '基础服务器没有变动';
 					return false;
 				}
 			}
 			else {
-				foreach ($this->games as $svrd) {
-					$current_svrds->{$svrd->name} = $svrd->version;
+				foreach ($this->basesvrds as $basesvrd) {
+					$current_svrds->{$basesvrd->name} = $basesvrd->version;
 				}
 			}
 		}
@@ -215,7 +215,7 @@ class VersionHelper
 			}
 		}
 
-		if (!$no_commsvrds_update) { // 如果有公共服务器升级则所有游戏都要升级
+		if (!$no_commsvrds_update) { // 如果有基础服务器升级则所有游戏都要升级
 			foreach ($current_versions as $current_version) {
 				if (!isset($new_versions[$current_version->gameinfo->name])) {
 					$new_versions[$current_version->gameinfo->name] = new Versions($current_version->gameinfo->type,$current_version->versions->so,$current_version->versions->gamesvrd,$current_version->versions->client,'because of commonsvrds update');

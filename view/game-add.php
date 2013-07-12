@@ -11,16 +11,24 @@
 <?php
 	require_once(VIEW_DIR.'/nav.php');
 ?>
-<div id="ajaxfrom">
-	<label for="gametype">游戏类型</label>
-	<input type="text" name="gametype" placeholder="7" id="gametype" />
-	<label for="gamename">游戏缩写</label>
-	<input type="text" name="gamename" placeholder="ddz" id="gamename" />
-	<label for="gamedesc">游戏名称</label>
-	<input type="text" name="gamedesc" placeholder="斗地主" id="gamedesc" />
-	<br />
-	<button id="addgame" class="btn btn-primary">添加</button>
-	<div id="tip"></div>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span4"></div>
+		<div class="span4">
+			<div id="ajaxfrom">
+				<label for="gametype">游戏类型</label>
+				<input type="text" name="gametype" placeholder="7" id="gametype" />
+				<label for="gamename">游戏缩写</label>
+				<input type="text" name="gamename" placeholder="ddz" id="gamename" />
+				<label for="gamedesc">游戏名称</label>
+				<input type="text" name="gamedesc" placeholder="斗地主" id="gamedesc" />
+				<br />
+				<button id="addgame" class="btn btn-primary">添加</button>
+				<div id="tip"></div>
+			</div>
+		</div>
+		<div class="span4"></div>
+	</div>
 </div>
 <script type="text/javascript">
 function checkData(form){
@@ -28,12 +36,12 @@ function checkData(form){
 		alert("游戏类型必须为自然数");
 		return false;
 	}
-	if (!/^[1-9a-zA-Z]+$/.test(form.gamename)) {
+	if (!/^[0-9a-zA-Z]+$/.test(form.gamename)) {
 		alert("游戏缩写只能由数字,字母组成");
 		return false;
 	}
-	if (!/^.+$/.test(form.gamedesc)){
-		alert("游戏名称不能为空");
+	if (!/^\S+$/.test(form.gamedesc)){
+		alert("游戏名称必须为空字符组成");
 		return false;
 	}
 	return true;

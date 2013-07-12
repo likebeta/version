@@ -12,6 +12,7 @@ $header_str = <<<EOF
 <link href="{$SITE_URL}/lib/bootstrap/2.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen" />
 <link href="{$SITE_URL}/lib/bootstrap/2.3.1/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen" />
 <link href="{$SITE_URL}/view/common.css" rel="stylesheet" media="screen" />
+<script src="{$SITE_URL}/view/common.js"></script>
 EOF;
 echo $header_str;
 ?>

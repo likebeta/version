@@ -5,7 +5,7 @@
 <?php 
 	require_once(VIEW_DIR.'/header.php');
 ?>
-<title>版本历史</title>
+<title>线上版本</title>
 </head>
 <body>
 <?php
@@ -37,7 +37,7 @@
 				<tbody>
 <?php
 				$str_echo = '';
-				foreach ($versions as $version) {
+				foreach ($current_versions as $version) {
 					$str_echo .= "<tr>";
 					$str_echo .= "<td>{$version->gameinfo->description}</td>";
 					$str_echo .= "<td>{$version->versions->time}</td>";
