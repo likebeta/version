@@ -54,7 +54,6 @@ fieldset {
 						<span class="brand">游戏升级</span>
 						<div class="nav-collapse collapse navbar-responsive-collapse">
 							<ul class="nav pull-right">
-								<li><a id="game-del"  href="#">删除</a></li>
 								<li><a href="#modal-container-games" data-toggle="modal">添加</a></li>
 							</ul>
 						</div>
@@ -68,7 +67,7 @@ fieldset {
 			<table class="table table-bordered table-hover table-striped" id="games-table">
 				<thead>
 					<tr>
-						<th><input type="checkbox" id="checkbox-all-games" /></th>
+						<th>操作</th>
 						<th>游戏名称</th>
 						<th>client版本</th>
 						<th>so版本</th>
@@ -100,6 +99,20 @@ fieldset {
 			</div>
 		</div>
 	</div>
+	<div class="row-fluid">
+		<div class="span12">
+			<table class="table table-bordered table-hover table-striped" id="basesvrds-table">
+				<thead>
+					<tr>
+						<th>操作</th>
+						<th>服务器名称</th>
+						<th>服务器版本</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
 </div>
 
 <div class="container-fluid">
@@ -110,63 +123,67 @@ fieldset {
 	</div>
 </div>
 
-<div id="modal-container-games" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3>请填写版本信息</h3>
-	</div>
-	<div class="modal-body">
-		<label>选择游戏</label>
-		<div class="btn-group">
-			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">连连看<span class="caret"></span></a>
-			<ul class="dropdown-menu">
-				<li><a href="#">对对碰</a></li>
-				<li><a href="#">美女找茬</a></li>
-				<li><a href="#">桌球</a></li>
-				<li><a href="#">滑雪</a></li>
-				<li><a href="#">悟空快跑</a></li>
-				<li><a href="#">斗地主</a></li>
-				<li><a href="#">切水果</a></li>
-				<li><a href="#">雷电</a></li>
-				<li><a href="#">麻将</a></li>
-			</ul>
+<div id="modal-containers">
+	<div id="modal-container-games" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3>请填写版本信息</h3>
 		</div>
-		<label for="client">客户端</label><input type="text" name="client" id="client" value="1.1.1.r1" />
-		<label for="so">游戏逻辑</label><input type="text" name="so" id="so" value="1.1.1.r1" />
-		<label for="gamesvrd">gamesvrd</label><input type="text" name="gamesvrd" id="gamesvrd" value="1.1.1.r1" />
-		<!-- <div class="textarea well well-small" contenteditable="true"></div> -->
-		<label>升级说明</label>
-		<textarea placeholder="升级说明" id="comment">1.1.1.r1</textarea>
+		<div class="modal-body">
+			<label>选择游戏</label>
+			<div class="btn-group">
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">连连看<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="#">对对碰</a></li>
+					<li><a href="#">美女找茬</a></li>
+					<li><a href="#">桌球</a></li>
+					<li><a href="#">滑雪</a></li>
+					<li><a href="#">悟空快跑</a></li>
+					<li><a href="#">斗地主</a></li>
+					<li><a href="#">切水果</a></li>
+					<li><a href="#">雷电</a></li>
+					<li><a href="#">麻将</a></li>
+				</ul>
+			</div>
+			<label for="client">客户端</label><input type="text" name="client" id="client" value="1.1.1.r1" />
+			<label for="so">游戏逻辑</label><input type="text" name="so" id="so" value="1.1.1.r1" />
+			<label for="gamesvrd">gamesvrd</label><input type="text" name="gamesvrd" id="gamesvrd" value="1.1.1.r1" />
+			<!-- <div class="textarea well well-small" contenteditable="true"></div> -->
+			<label>升级说明</label>
+			<textarea placeholder="升级说明" id="comment">1.1.1.r1</textarea>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button> <button class="btn btn-primary" id="save-games">保存设置</button>
+		</div>
 	</div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button> <button class="btn btn-primary" id="save-games">保存设置</button>
-	</div>
-</div>
 
-<div id="modal-container-basesvrds" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3>标题栏</h3>
-	</div>
-	<div class="modal-body">
-		<span>选择：</span>
-		<div class="btn-group">
-			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">adminsvrd<span class="caret"></span></a>
-			<ul class="dropdown-menu">
-				<li><a href="#">dbsvrd</a></li>
-				<li><a href="#">friendsvrd</a></li>
-				<li><a href="#">logsvrd</a></li>
-				<li><a href="#">propertysvrd</a></li>
-				<li><a href="#">proxysvrd</a></li>
-				<li><a href="#">roommngsvrd</a></li>
-				<li><a href="#">shopsvrd</a></li>
-				<li><a href="#">statsvrd</a></li>
-				<li><a href="#">websvrd</a></li>
-			</ul>
+	<div id="modal-container-basesvrds" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3>请填写版本信息</h3>
 		</div>
-	</div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button> <button class="btn btn-primary" id="save-basesvrds">保存设置</button>
+		<div class="modal-body">
+			<label>选择服务器</label>
+			<div class="btn-group">
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">adminsvrd<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="#">dbsvrd</a></li>
+					<li><a href="#">friendsvrd</a></li>
+					<li><a href="#">logsvrd</a></li>
+					<li><a href="#">propertysvrd</a></li>
+					<li><a href="#">proxysvrd</a></li>
+					<li><a href="#">roommngsvrd</a></li>
+					<li><a href="#">shopsvrd</a></li>
+					<li><a href="#">statsvrd</a></li>
+					<li><a href="#">websvrd</a></li>
+				</ul>
+			</div>
+			<label for="svrd">服务器版本</label><input type="text" name="svrd" id="svrd" value="1.1.1.r1" />
+			<div style="height:200px"></div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button> <button class="btn btn-primary" id="save-basesvrds">保存设置</button>
+		</div>
 	</div>
 </div>
 
@@ -188,21 +205,24 @@ fieldset {
 
 <script type="text/javascript">
 $(document).ready(function(){
-	$('#modal-container-games ul.dropdown-menu li a').click(function(event){
-		event.preventDefault();
-		var thisText = $(this).text();
-		$(this).text(getSelectedText('#modal-container-games'));
-		setSelectedText('#modal-container-games',thisText);
-		showItem.nodeValue = thisText;
-		
+	$("#modal-container-games ul.dropdown-menu").click(function(event){
+		if (event.target.nodeName.toLowerCase() == 'a') {
+			event.preventDefault();
+			var targetText = $(event.target).text();
+			$(event.target).text(getSelectedText('#modal-container-games'));
+			setSelectedText('#modal-container-games',targetText);
+			showItem.nodeValue = targetText;
+		}
 	});
 
-	$('#modal-container-basesvrds ul.dropdown-menu li a').click(function(event){
-		event.preventDefault();
-		var thisText = $(this).text();
-		$(this).text(getSelectedText('#modal-container-basesvrds'));
-		setSelectedText('#modal-container-basesvrds',thisText);
-		showItem.nodeValue = thisText;		
+	$('#modal-container-basesvrds ul.dropdown-menu').click(function(event){
+		if (event.target.nodeName.toLowerCase() == 'a') {
+			event.preventDefault();
+			var targetText = $(event.target).text();
+			$(event.target).text(getSelectedText('#modal-container-basesvrds'));
+			setSelectedText('#modal-container-basesvrds',targetText);
+			showItem.nodeValue = targetText;
+		}		
 	});
 
 	$('#save-games').click(function(){
@@ -242,28 +262,28 @@ $(document).ready(function(){
 		setSelectedText('#modal-container-games',newText);
 	});
 
-	$('#checkbox-all-games,#checkbox-all-basesvrds').click(function() {
-		var checked = $(this)[0].checked;
-		console.debug(checked);
-		if ($(this).attr('id') == 'checkbox-all-games'){
-			var tableId = 'games-table';
+	$('#save-basesvrds').click(function(){
+		var text = getSelectedText('#modal-container-basesvrds');
+		if (text == '') {
+			alert("没有基础服务器可以添加");
+			return false;		
 		}
-		else {
-			var tableId = 'basesvrds-table';
+		var svrd = $('#svrd').val();
+		if (!checkVersion(svrd)) {
+			alert("基础服务器版本格式有误");
+			return false;
 		}
-
-		
-		if (!checked) {
-			$('#' + tableId + ' input[type="checkbox"]').each(function(){
-				$(this)[0].checked = false;
-			});			
+		addSvrdToTable(text,svrd);
+		$('#modal-container-basesvrds').modal('hide');
+		var first = $('#modal-container-basesvrds ul.dropdown-menu li a:eq(0)');
+		var newText = '';
+		if (first.size() > 0) {
+			newText = first[0].text;
+			first.remove();
 		}
-		else {
-			$('#' + tableId + ' input[type="checkbox"]').each(function(){
-				$(this)[0].checked = true;
-			});				
-		}
+		setSelectedText('#modal-container-basesvrds',newText);
 	});
+
 });
 
 	var gamesinfo = {
@@ -340,7 +360,7 @@ function getGameinfoByGamedesc(description) {
 function addGameToTable(game,client,so,gamesvrd,comment) {
 	var id = getGameinfoByGamedesc(game).name;
 	var newRow = '<tr>';
-	newRow += '<td><input type="checkbox" id="' + id + '" /></td>';
+	newRow += '<td><a href="#" id="' + id+ '">删除</a></td>';
 	newRow += '<td>' + game + '</td>';
 	newRow += '<td>' + client + '</td>';
 	newRow += '<td>' + so + '</td>';
@@ -348,6 +368,27 @@ function addGameToTable(game,client,so,gamesvrd,comment) {
 	newRow += '<td>' + comment + '</td>';
 	newRow += '</tr>';
 	$('#games-table tr:last').after(newRow);
+	$('#games-table tr:last a').click(function(event) {
+		event.preventDefault();
+		var desc = gamesinfo[$(this).attr('id')].description;
+		$('#modal-container-games ul.dropdown-menu').append('<li><a href="#">' + desc + '</a></li>');
+		$(this).parent().parent().remove();
+	});
+}
+
+function addSvrdToTable(text,svrd) {
+	var newRow = '<tr>';
+	newRow += '<td><a href="#" id="' + text+ '">删除</a></td>';
+	newRow += '<td>' + text + '</td>';
+	newRow += '<td>' + svrd + '</td>';
+	newRow += '</tr>';
+	$('#basesvrds-table tr:last').after(newRow);
+	$('#basesvrds-table tr:last a').click(function(event) {
+		event.preventDefault();
+		var desc = $(this).attr('id');
+		$('#modal-container-basesvrds ul.dropdown-menu').append('<li><a href="#">' + desc + '</a></li>');
+		$(this).parent().parent().remove();
+	});
 }
 </script>
 </body>
