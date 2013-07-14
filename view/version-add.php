@@ -66,13 +66,13 @@ fieldset {
 		<div class="span12">
 			<table class="table table-bordered table-hover table-striped" id="games-table">
 				<thead>
-					<tr>
-						<th>操作</th>
+					<tr>						
 						<th>游戏名称</th>
 						<th>client版本</th>
 						<th>so版本</th>
 						<th>gamesvrd版本</th>
 						<th>升级说明</th>
+						<th>操作</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -103,10 +103,10 @@ fieldset {
 		<div class="span12">
 			<table class="table table-bordered table-hover table-striped" id="basesvrds-table">
 				<thead>
-					<tr>
-						<th>操作</th>
+					<tr>						
 						<th>服务器名称</th>
 						<th>服务器版本</th>
+						<th>操作</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -119,6 +119,11 @@ fieldset {
 	<div class="row-fluid">
 		<div class="span12">
 			<div id="tip"></div>
+		</div>
+	</div>
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="pull-right"><button class="btn btn-primary" id="submit">提交上线</button></div>
 		</div>
 	</div>
 </div>
@@ -225,6 +230,24 @@ $(document).ready(function(){
 		}		
 	});
 
+	$('#games-table tbody').click(function(event) {
+		if (event.target.nodeName.toLowerCase() == 'a'){
+			event.preventDefault();
+			var desc = gamesinfo[$(event.target).attr('id')].description;
+			$('#modal-container-games ul.dropdown-menu').append('<li><a href="#">' + desc + '</a></li>');
+			$(event.target).parent().parent().remove();			
+		}
+	});
+
+	$('#basesvrds-table tbody').click(function(event) {
+		if (event.target.nodeName.toLowerCase() == 'a') {
+			event.preventDefault();
+			var desc = $(event.target).attr('id');
+			$('#modal-container-basesvrds ul.dropdown-menu').append('<li><a href="#">' + desc + '</a></li>');
+			$(event.target).parent().parent().remove();	
+		}
+	});
+
 	$('#save-games').click(function(){
 		var text = getSelectedText('#modal-container-games');
 		if (text == '') {
@@ -284,6 +307,10 @@ $(document).ready(function(){
 		setSelectedText('#modal-container-basesvrds',newText);
 	});
 
+	$('#submit').click(function(){
+		var jjj = getSubmitData();
+	});
+
 });
 
 	var gamesinfo = {
@@ -313,8 +340,8 @@ $(document).ready(function(){
 	// 	$('#tip').html(makeTip(data.desc,data.result));
 	// },'json');
 
-// var games=[];
-// var basesvrds=[];
+// var games = new Array();
+// var basesvrds=new Array();
 // games.push({"name": "ddz","so": "1.5","client": "1.3","gamesvrd": "1.6","comment": "fuck you"});
 // games.push({"name": "llk","so": "1.2","client": "1.6","gamesvrd": "1.7","comment": "fuck you"});
 // basesvrds.push({"name": "dbsvrd","version": "2.3"});
@@ -360,34 +387,29 @@ function getGameinfoByGamedesc(description) {
 function addGameToTable(game,client,so,gamesvrd,comment) {
 	var id = getGameinfoByGamedesc(game).name;
 	var newRow = '<tr>';
-	newRow += '<td><a href="#" id="' + id+ '">删除</a></td>';
 	newRow += '<td>' + game + '</td>';
 	newRow += '<td>' + client + '</td>';
 	newRow += '<td>' + so + '</td>';
 	newRow += '<td>' + gamesvrd + '</td>';
 	newRow += '<td>' + comment + '</td>';
+	newRow += '<td><a href="#" id="' + id+ '">删除</a></td>';
 	newRow += '</tr>';
-	$('#games-table tr:last').after(newRow);
-	$('#games-table tr:last a').click(function(event) {
-		event.preventDefault();
-		var desc = gamesinfo[$(this).attr('id')].description;
-		$('#modal-container-games ul.dropdown-menu').append('<li><a href="#">' + desc + '</a></li>');
-		$(this).parent().parent().remove();
-	});
+	$('#games-table tbody').append(newRow);
 }
 
 function addSvrdToTable(text,svrd) {
 	var newRow = '<tr>';
-	newRow += '<td><a href="#" id="' + text+ '">删除</a></td>';
 	newRow += '<td>' + text + '</td>';
 	newRow += '<td>' + svrd + '</td>';
+	newRow += '<td><a href="#" id="' + text+ '">删除</a></td>';
 	newRow += '</tr>';
-	$('#basesvrds-table tr:last').after(newRow);
-	$('#basesvrds-table tr:last a').click(function(event) {
-		event.preventDefault();
-		var desc = $(this).attr('id');
-		$('#modal-container-basesvrds ul.dropdown-menu').append('<li><a href="#">' + desc + '</a></li>');
-		$(this).parent().parent().remove();
+	$('#basesvrds-table tbody').append(newRow);
+}
+
+// games.push({"name": "ddz","so": "1.5","client": "1.3","gamesvrd": "1.6","comment": "fuck you"});
+function getSubmitData(){
+	$('#games-table tbody tr').each(function(){
+		var game = new Object();
 	});
 }
 </script>
