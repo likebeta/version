@@ -34,6 +34,22 @@ else {
 		define('ERROR_TITLE', '添加版本');
 		define('ERROR_REASON', '请先添加游戏');
 	}
+	else {
+		$current_versions = $dao->getCurrentVersionsInfo();
+		if ($current_versions === false) {
+			define('CALL_ERROR_VIEW', true);
+			define('ERROR_TITLE', '添加版本');
+			define('ERROR_REASON', $dao->getLastError());
+		}
+		else {
+			$current_basesvrds = $dao->getCurrentBasesvrdsVersionInfo();
+			if ($current_versions === false) {
+				define('CALL_ERROR_VIEW', true);
+				define('ERROR_TITLE', '添加版本');
+				define('ERROR_REASON', $dao->getLastError());
+			}
+		}
+	}
 }
 
 /**

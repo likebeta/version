@@ -7,9 +7,10 @@
 ?>
 <title>添加版本</title>
 <style type="text/css">
-/*label {
+.modal-body label {
 	display: inline-block;
-}*/
+}
+
 .textarea{
 	min-height: 30px;
 	background-color: #FFF;
@@ -142,17 +143,20 @@ fieldset {
 	$str_echo .= '<ul class="dropdown-menu">';
 	for ($i = 1; $i < count($gamesinfo); $i++) {
 		$str_echo .= '<li><a href="#">'.$gamesinfo[$i]->description.'</a></li>';
-	}	
+	}
 	$str_echo .= '</ul>';
 	echo $str_echo;
 ?>
 			</div>
-			<label for="client">客户端</label><input type="text" name="client" id="client" value="1.1.1.r1" />
-			<label for="so">游戏逻辑</label><input type="text" name="so" id="so" value="1.1.1.r1" />
-			<label for="gamesvrd">gamesvrd</label><input type="text" name="gamesvrd" id="gamesvrd" value="1.1.1.r1" />
+			<div><input type="checkbox" id="for-client" /><label for="for-client">客户端</label><input type="text" name="client" id="client" /></div>			
+			<div><input type="checkbox" id="for-so" /><label for="for-so">游戏逻辑</label><input type="text" name="so" id="so" /></div>
+			<div><input type="checkbox" id="for-gamesvrd" /><label for="for-gamesvrd">gamesvrd</label><input type="text" name="gamesvrd" id="gamesvrd" /></div>
 			<!-- <div class="textarea well well-small" contenteditable="true"></div> -->
-			<label>升级说明</label>
-			<textarea placeholder="升级说明" id="comment">1.1.1.r1</textarea>
+			<div>
+				<label>升级说明</label>
+				<textarea placeholder="升级说明" id="comment"></textarea>
+			</div>
+			<div style="height:100px"></div>
 		</div>
 		<div class="modal-footer">
 			<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button> <button class="btn btn-primary" id="save-games">保存设置</button>
@@ -180,7 +184,7 @@ fieldset {
 					<li><a href="#">websvrd</a></li>
 				</ul>
 			</div>
-			<label for="svrd">服务器版本</label><input type="text" name="svrd" id="svrd" value="1.1.1.r1" />
+			<div><label for="for-svrd">服务器版本</label><input type="text" name="svrd" id="svrd" /></div>
 			<div style="height:200px"></div>
 		</div>
 		<div class="modal-footer">
@@ -220,14 +224,42 @@ fieldset {
 // };
 
 <?php
-$str_echo = 'var gamesinfo = {';
+$str_echo = '';
 for ($i = 0; $i < count($gamesinfo); $i++) { 
 	$str_echo .= <<<EOF
 {$gamesinfo[$i]->name}: {type:{$gamesinfo[$i]->type},name:"{$gamesinfo[$i]->name}",description:"{$gamesinfo[$i]->description}"},
 EOF;
 }
-$str_echo = substr($str_echo, 0, -1);
-$str_echo .= '};';
+if (!empty($str_echo)) {
+	$str_echo = substr($str_echo, 0, -1);
+}
+$str_echo = 'var gamesinfo = {'.$str_echo.'};';
+echo $str_echo;
+?>
+
+<?php
+$str_echo = '';
+foreach ($current_versions as $current_version) {
+	$str_echo .= <<<EOF
+{$current_version->gameinfo->name}: {so:"{$current_version->versions->so}",client:"{$current_version->versions->client}",gamesvrd:"{$current_version->versions->gamesvrd}"},
+EOF;
+}
+if (!empty($str_echo)) {
+	$str_echo = substr($str_echo, 0, -1);
+}
+$str_echo = 'var currentGamesVersion = {'.$str_echo.'};';
+echo $str_echo;
+?>
+
+<?php
+$str_echo = '';
+foreach ($current_basesvrds as $key => $value) {
+	$str_echo .= $key.': "'.$value.'",';
+}
+if (!empty($str_echo)) {
+	$str_echo = substr($str_echo, 0, -1);
+}
+$str_echo = 'var currentBasesvrds = {'.$str_echo.'};';
 echo $str_echo;
 ?>
 
@@ -241,7 +273,6 @@ $(document).ready(function(){
 			var targetText = $(event.target).text();
 			$(event.target).text(getSelectedText('#modal-container-games'));
 			setSelectedText('#modal-container-games',targetText);
-			showItem.nodeValue = targetText;
 		}
 	});
 
@@ -251,8 +282,7 @@ $(document).ready(function(){
 			var targetText = $(event.target).text();
 			$(event.target).text(getSelectedText('#modal-container-basesvrds'));
 			setSelectedText('#modal-container-basesvrds',targetText);
-			showItem.nodeValue = targetText;
-		}		
+		}
 	});
 
 	$('#games-table tbody').click(function(event) {
@@ -339,6 +369,7 @@ $(document).ready(function(){
 				$('#tip').html(makeTip(data.desc,data.result));
 				if (data.result == 'success') {
 					$('#games-table tbody tr,#basesvrds-table tbody tr').remove();
+					updateData();
 				}
 				$('#submit')[0].disabled = false;
 			},'json');
@@ -351,14 +382,34 @@ $(document).ready(function(){
 		// form.submit();
 	});
 
+	$('#modal-container-games').on('show', function() {
+		flushModelGames();
+	});
+
+	$('#for-client,#for-so,#for-gamesvrd').click(function(){
+		var checked = $(this)[0].checked;
+		var id = $(this).attr('id').replace('for-','');
+		$('#' + id)[0].disabled = !checked;
+	});
+
+	$('#modal-container-basesvrds').on('show', function() {
+		flushModelBasesvrd();
+	});
+
 });
 
-function getSelectedText(id){
+function getSelectedText(id) {
 	return $(id + ' .dropdown-toggle')[0].firstChild.nodeValue;
 }
 
-function setSelectedText(id,value){
-	return $(id + ' .dropdown-toggle')[0].firstChild.nodeValue = value;
+function setSelectedText(id,value) {
+	$(id + ' .dropdown-toggle')[0].firstChild.nodeValue = value;
+	if (id == '#modal-container-games') {
+		flushModelGames();
+	}
+	else if (id == '#modal-container-basesvrds') {
+		flushModelBasesvrd();
+	}
 }
 
 function makeTip(text,classname){
@@ -382,6 +433,20 @@ function getGameinfoByGamedesc(description) {
 		if (typeof(gamesinfo[i]) != 'function' && gamesinfo[i].description == description) {
 			return gamesinfo[i];
 		}
+	}
+	return false;
+}
+
+function getCurrentVersionInfoByGamename(name) {
+	if (typeof(currentGamesVersion[name]) != 'function' && currentGamesVersion[name] != undefined) {
+		return currentGamesVersion[name];
+	}
+	return false;
+}
+
+function getBasesvrdVersion(name) {
+	if (typeof(currentBasesvrds[name]) != 'function' && currentBasesvrds[name] != undefined) {
+		return currentBasesvrds[name];
 	}
 	return false;
 }
@@ -432,6 +497,47 @@ function getSubmitJsonData(){
 	}
 
 	return {games: JSON.stringify(games), basesvrds: JSON.stringify(basesvrds)};
+}
+
+function updateData() {
+	for (var i = games.length - 1; i >= 0; i--) {
+		currentGamesVersion[games[i].name] = {so:games[i].so,client:games[i].client,gamesvrd:games[i].gamesvrd};
+	}
+
+	for (var i = basesvrds.length - 1; i >= 0; i--) {
+		currentBasesvrds[basesvrds[i].name] = basesvrds[i].version;
+	}
+}
+
+function flushModelGames(){
+	$('#for-client,#for-so,#for-gamesvrd').each(function(){
+			$(this)[0].checked = false;
+		});
+	$('#client,#so,#gamesvrd').each(function(){
+		var text = getSelectedText('#modal-container-games');
+		var name = getGameinfoByGamedesc(text).name;
+		var current_version = getCurrentVersionInfoByGamename(name);
+		if (current_version != false) {
+			var id = $(this).attr('id');
+			$(this).val(current_version[id]);
+		}
+		else {
+			$(this).val('');
+		}
+		$(this)[0].disabled = true;
+	});
+}
+
+function flushModelBasesvrd(){
+	var svrd = $('#svrd');
+	var text = getSelectedText('#modal-container-basesvrds');
+	var basesvrdVersion = getBasesvrdVersion(text);
+	if (basesvrdVersion != false) {
+		svrd.val(basesvrdVersion);		
+	}
+	else {
+		svrd.val('');
+	}
 }
 </script>
 </body>
