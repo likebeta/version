@@ -21,6 +21,20 @@ if (isset($_POST['games']) && isset($_POST['basesvrds'])) {
 	echo json_encode($json);
 	die();
 }
+else {
+	$dao = new MysqlDao();
+	$gamesinfo = $dao->getGameInfo();
+	if ($gamesinfo === false) {
+		define('CALL_ERROR_VIEW', true);
+		define('ERROR_TITLE', '添加版本');
+		define('ERROR_REASON', $dao->getLastError());
+	}
+	elseif (count($gamesinfo) == 0) {
+		define('CALL_ERROR_VIEW', true);
+		define('ERROR_TITLE', '添加版本');
+		define('ERROR_REASON', '请先添加游戏');
+	}
+}
 
 /**
 * 处理添加版本
@@ -42,10 +56,35 @@ class VersionHelper
 		return $this->error;
 	}
 
-	private function isDataTypeOk()
+	private function checkVersion($ver)
+	{
+		// 3.1.56.r13124
+		if (!preg_match('/^([1-9][0-9]*)\.(0|([1-9][0-9]*))\.(0|([1-9][0-9]*))\.r[1-9][0-9]*$/', $ver)){
+			return false;
+		}
+		return true;
+	}
+
+	private function isDataLegal()
 	{
 		foreach ($this->games as $game) {
 			if (!isset($game->name) || !isset($game->so) || !isset($game->client) || !isset($game->gamesvrd) || !isset($game->comment)) {
+				return false;
+			}
+
+			if (!$this->checkVersion($game->so)) {
+				return false;
+			}
+
+			if (!$this->checkVersion($game->client)) {
+				return false;
+			}
+
+			if (!$this->checkVersion($game->gamesvrd)) {
+				return false;
+			}
+
+			if (!preg_match('/^\S+$/', $game->commit)) {
 				return false;
 			}
 		}
@@ -54,8 +93,11 @@ class VersionHelper
 			if (!isset($basesvrd->name) || !isset($basesvrd->version)) {
 				return false;
 			}
-		}
 
+			if (!$this->checkVersion($basesvrd->version)) {
+				return false;
+			}
+		}
 
 		return true;
 	}
@@ -123,7 +165,7 @@ class VersionHelper
 		}
 
 		// 检查数据类型是否合法
-		if (!$this->isDataTypeOk()) {
+		if (!$this->isDataLegal()) {
 			$this->error = 'unlegal json data';
 			return false;
 		}

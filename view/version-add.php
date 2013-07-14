@@ -5,7 +5,7 @@
 <?php 
 	require_once(VIEW_DIR.'/header.php');
 ?>
-<title><?php echo $page_title;?></title>
+<title>添加版本</title>
 <style type="text/css">
 /*label {
 	display: inline-block;
@@ -137,18 +137,15 @@ fieldset {
 		<div class="modal-body">
 			<label>选择游戏</label>
 			<div class="btn-group">
-				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">连连看<span class="caret"></span></a>
-				<ul class="dropdown-menu">
-					<li><a href="#">对对碰</a></li>
-					<li><a href="#">美女找茬</a></li>
-					<li><a href="#">桌球</a></li>
-					<li><a href="#">滑雪</a></li>
-					<li><a href="#">悟空快跑</a></li>
-					<li><a href="#">斗地主</a></li>
-					<li><a href="#">切水果</a></li>
-					<li><a href="#">雷电</a></li>
-					<li><a href="#">麻将</a></li>
-				</ul>
+<?php			
+	$str_echo = '<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">'. $gamesinfo[0]->description .'<span class="caret"></span></a>';
+	$str_echo .= '<ul class="dropdown-menu">';
+	for ($i = 1; $i < count($gamesinfo); $i++) {
+		$str_echo .= '<li><a href="#">'.$gamesinfo[$i]->description.'</a></li>';
+	}	
+	$str_echo .= '</ul>';
+	echo $str_echo;
+?>
 			</div>
 			<label for="client">客户端</label><input type="text" name="client" id="client" value="1.1.1.r1" />
 			<label for="so">游戏逻辑</label><input type="text" name="so" id="so" value="1.1.1.r1" />
@@ -209,6 +206,34 @@ fieldset {
 </form> -->
 
 <script type="text/javascript">
+// var gamesinfo = {
+// 	llk: {type:1,name:"llk",description:"连连看"},
+// 	ddp: {type:2,name:"ddp",description:"对对碰"},
+// 	zc: {type:3,name:"zc",description:"找茬"},
+// 	zq: {type:4,name:"zq",description:"桌球"},
+// 	hx: {type:5,name:"hx",description:"滑雪"},
+// 	wkkp: {type:6,name:"wkkp",description:"悟空快跑"},
+// 	ddz: {type:7,name:"ddz",description:"斗地主"},
+// 	qsg: {type:8,name:"qsg",description:"切水果"},
+// 	ld: {type:9,name:"ld",description:"雷电"},
+// 	mj: {type:10,name:"mj",description:"麻将"}
+// };
+
+<?php
+$str_echo = 'var gamesinfo = {';
+for ($i = 0; $i < count($gamesinfo); $i++) { 
+	$str_echo .= <<<EOF
+{$gamesinfo[$i]->name}: {type:{$gamesinfo[$i]->type},name:"{$gamesinfo[$i]->name}",description:"{$gamesinfo[$i]->description}"},
+EOF;
+}
+$str_echo = substr($str_echo, 0, -1);
+$str_echo .= '};';
+echo $str_echo;
+?>
+
+var games = new Array();
+var basesvrds=new Array();
+
 $(document).ready(function(){
 	$("#modal-container-games ul.dropdown-menu").click(function(event){
 		if (event.target.nodeName.toLowerCase() == 'a') {
@@ -308,48 +333,25 @@ $(document).ready(function(){
 	});
 
 	$('#submit').click(function(){
-		var jjj = getSubmitData();
+		var form = getSubmitJsonData();
+		if (form) {
+			$.post('./add',form,function(data){
+				$('#tip').html(makeTip(data.desc,data.result));
+				if (data.result == 'success') {
+					$('#games-table tbody tr,#basesvrds-table tbody tr').remove();
+				}
+				$('#submit')[0].disabled = false;
+			},'json');
+			$('#submit')[0].disabled = true;
+		}
+
+		// var form = document.getElementById("test");
+		// form.games.value = JSON.stringify(games);
+		// form.basesvrds.value = JSON.stringify(basesvrds);	
+		// form.submit();
 	});
 
 });
-
-	var gamesinfo = {
-		llk: {type:1,name:"llk",description:"连连看"},
-		ddp: {type:2,name:"ddp",description:"对对碰"},
-		zc: {type:3,name:"zc",description:"找茬"},
-		zq: {type:4,name:"zq",description:"桌球"},
-		hx: {type:5,name:"hx",description:"滑雪"},
-		wkkp: {type:6,name:"wkkp",description:"悟空快跑"},
-		ddz: {type:7,name:"ddz",description:"斗地主"},
-		qsg: {type:8,name:"qsg",description:"切水果"},
-		ld: {type:9,name:"ld",description:"雷电"},
-		mj: {type:10,name:"mj",description:"麻将"}
-	};
-
-	var games = new Array();
-	var basesvrds=new Array();
-	// games.push({"name": "ddz","so": "1.5","client": "1.3","gamesvrd": "1.6","comment": "fuck you"});
-	// games.push({"name": "llk","so": "1.2","client": "1.6","gamesvrd": "1.7","comment": "fuck you"});
-	// basesvrds.push({"name": "dbsvrd","version": "2.3"});
-	// basesvrds.push({"name": "proxysvrd","version": "3.3"});
-
-	// var form = new Object();
-	// form.games = JSON.stringify(games);
-	// form.basesvrds = JSON.stringify(basesvrds);
-	// $.post('./add',form,function(data){
-	// 	$('#tip').html(makeTip(data.desc,data.result));
-	// },'json');
-
-// var games = new Array();
-// var basesvrds=new Array();
-// games.push({"name": "ddz","so": "1.5","client": "1.3","gamesvrd": "1.6","comment": "fuck you"});
-// games.push({"name": "llk","so": "1.2","client": "1.6","gamesvrd": "1.7","comment": "fuck you"});
-// basesvrds.push({"name": "dbsvrd","version": "2.3"});
-// basesvrds.push({"name": "proxysvrd","version": "3.3"});
-// var form = document.getElementById("test");
-// form.games.value = JSON.stringify(games);
-// form.basesvrds.value = JSON.stringify(basesvrds);	
-// form.submit();
 
 function getSelectedText(id){
 	return $(id + ' .dropdown-toggle')[0].firstChild.nodeValue;
@@ -392,7 +394,7 @@ function addGameToTable(game,client,so,gamesvrd,comment) {
 	newRow += '<td>' + so + '</td>';
 	newRow += '<td>' + gamesvrd + '</td>';
 	newRow += '<td>' + comment + '</td>';
-	newRow += '<td><a href="#" id="' + id+ '">删除</a></td>';
+	newRow += '<td><a href="#" id="' + id + '">删除</a></td>';
 	newRow += '</tr>';
 	$('#games-table tbody').append(newRow);
 }
@@ -406,11 +408,30 @@ function addSvrdToTable(text,svrd) {
 	$('#basesvrds-table tbody').append(newRow);
 }
 
-// games.push({"name": "ddz","so": "1.5","client": "1.3","gamesvrd": "1.6","comment": "fuck you"});
-function getSubmitData(){
+function getSubmitJsonData(){
+	games = new Array();
+	basesvrds = new Array();
 	$('#games-table tbody tr').each(function(){
-		var game = new Object();
+ 		var desc = $(this).find('td:nth-child(1)').text();
+ 		var client = $(this).find('td:nth-child(2)').text();
+ 		var so = $(this).find('td:nth-child(3)').text();
+ 		var gamesvrd = $(this).find('td:nth-child(4)').text();
+ 		var comment = $(this).find('td:nth-child(5)').text();
+ 		var name = getGameinfoByGamedesc(desc).name;
+ 		games.push({name: name, so: so, client: client, gamesvrd: gamesvrd, comment: comment});
 	});
+
+	$('#basesvrds-table tbody tr').each(function(){
+ 		var name = $(this).find('td:nth-child(1)').text();
+ 		var version = $(this).find('td:nth-child(2)').text();
+ 		games.push({name: name, version: version});
+	});
+
+	if (games.length == 0 && basesvrds.length == 0){
+		return false;
+	}
+
+	return {games: JSON.stringify(games), basesvrds: JSON.stringify(basesvrds)};
 }
 </script>
 </body>
