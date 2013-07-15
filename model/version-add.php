@@ -1,6 +1,5 @@
 <?php
 require_once(DAO_DIR.'/mysqldao.class.php');
-$page_title = '上线版本';
 if (isset($_POST['games']) && isset($_POST['basesvrds'])) {
 	$version_helper = new VersionHelper($_POST['games'],$_POST['basesvrds']);
 	if ($version_helper->addNewVersions()) {
@@ -100,7 +99,7 @@ class VersionHelper
 				return false;
 			}
 
-			if (!preg_match('/^\S+$/', $game->commit)) {
+			if (!preg_match('/^\S+$/', $game->comment)) {
 				return false;
 			}
 		}

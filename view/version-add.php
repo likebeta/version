@@ -154,7 +154,7 @@ fieldset {
 			<!-- <div class="textarea well well-small" contenteditable="true"></div> -->
 			<div>
 				<label>升级说明</label>
-				<textarea placeholder="升级说明" id="comment"></textarea>
+				<textarea placeholder="升级说明" id="comment" class="input-block-level"></textarea>
 			</div>
 			<div style="height:100px"></div>
 		</div>

@@ -19,8 +19,8 @@
 					<tr>
 						<th>name</th>
 						<th>time</th>
-						<th>so</th>
 						<th>client</th>
+						<th>so</th>
 						<th>gamesvrd</th>
 						<th>adminsvrd</th>
 						<th>dbsvrd</th>
