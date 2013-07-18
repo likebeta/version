@@ -253,9 +253,13 @@ echo $str_echo;
 
 <?php
 $str_echo = '';
-foreach ($current_basesvrds as $key => $value) {
+
+if (is_object($current_basesvrds)) {
+	foreach ($current_basesvrds as $key => $value) {
 	$str_echo .= $key.': "'.$value.'",';
+	}
 }
+
 if (!empty($str_echo)) {
 	$str_echo = substr($str_echo, 0, -1);
 }
@@ -489,7 +493,7 @@ function getSubmitJsonData(){
 	$('#basesvrds-table tbody tr').each(function(){
  		var name = $(this).find('td:nth-child(1)').text();
  		var version = $(this).find('td:nth-child(2)').text();
- 		games.push({name: name, version: version});
+ 		basesvrds.push({name: name, version: version});
 	});
 
 	if (games.length == 0 && basesvrds.length == 0){
@@ -502,10 +506,12 @@ function getSubmitJsonData(){
 function updateData() {
 	for (var i = games.length - 1; i >= 0; i--) {
 		currentGamesVersion[games[i].name] = {so:games[i].so,client:games[i].client,gamesvrd:games[i].gamesvrd};
+		$('#modal-container-games ul.dropdown-menu').append('<li><a href="#">' + gamesinfo[games[i].name].description + '</a></li>');
 	}
 
 	for (var i = basesvrds.length - 1; i >= 0; i--) {
 		currentBasesvrds[basesvrds[i].name] = basesvrds[i].version;
+		$('#modal-container-basesvrds ul.dropdown-menu').append('<li><a href="#">' + basesvrds[i].name + '</a></li>');		
 	}
 }
 

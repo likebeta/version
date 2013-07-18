@@ -1,6 +1,7 @@
 <?php
 require_once(DAO_DIR.'/mysqldao.class.php');
 if (isset($_POST['games']) && isset($_POST['basesvrds'])) {
+//	var_dump($_POST);
 	$version_helper = new VersionHelper($_POST['games'],$_POST['basesvrds']);
 	if ($version_helper->addNewVersions()) {
 		$add_result = '添加成功';
@@ -187,7 +188,7 @@ class VersionHelper
 
 		// 检查数据是否重复
 		if (!$this->isHaveRepeat()) {
-			$this->error = 'unlegal json data';
+			$this->error = 'json data repeat';
 			return false;
 		}
 
@@ -230,15 +231,15 @@ class VersionHelper
 			}
 		}
 
-		// 第一次需要检查基础服务器的数据是否齐全
-		if ($current_svrds === true && count($basesvrds) != count($this->commonsvrds)) {
-			$this->error = '第一次需要填写所有基础服务器的版本号';
-			return false;
-		}
+		// // 第一次需要检查基础服务器的数据是否齐全
+		// if ($current_svrds === true && count($basesvrds) != count($this->commonsvrds)) {
+		// 	$this->error = '第一次需要填写所有基础服务器的版本号';
+		// 	return false;
+		// }
 
 		// 构建添加基础服务器记录
 		if (!$no_commsvrds_update) {		// 有基础服务器升级
-			if ($current_svrds !== true) {	// 不是第一次,需要检查版本是否真的有变动
+			if (is_object($current_svrds)) {	// 不是第一次,需要检查版本是否真的有变动
 				$have_diff = false;
 				foreach ($this->basesvrds as $basesvrd) {
 					if ($basesvrd->version != $current_svrds->{$basesvrd->name}) {
@@ -252,6 +253,7 @@ class VersionHelper
 				}
 			}
 			else {
+				$current_svrds = new Basesvrds('-','-','-','-','-','-','-','-','-','-');
 				foreach ($this->basesvrds as $basesvrd) {
 					$current_svrds->{$basesvrd->name} = $basesvrd->version;
 				}
@@ -275,7 +277,7 @@ class VersionHelper
 		if (!$no_commsvrds_update) { // 如果有基础服务器升级则所有游戏都要升级
 			foreach ($current_versions as $current_version) {
 				if (!isset($new_versions[$current_version->gameinfo->name])) {
-					$new_versions[$current_version->gameinfo->name] = new Versions($current_version->gameinfo->type,$current_version->versions->so,$current_version->versions->gamesvrd,$current_version->versions->client,'because of commonsvrds update');
+					$new_versions[$current_version->gameinfo->name] = new Versions($current_version->gameinfo->type,$current_version->versions->so,$current_version->versions->gamesvrd,$current_version->versions->client,'because of basesvrds update');
 				}
 			}
 		}
@@ -283,7 +285,7 @@ class VersionHelper
 		// 修改数据库，使用事物保证原子性
 		$dao->begin();
 		if (!$no_commsvrds_update) {
-			if (!$dao->addNewCommonSvrds($current_svrds)) {
+			if (!$dao->addNewBasesvrds($current_svrds)) {
 				$this->error = $dao->getLastError();
 				$dao->rollback();
 				return false;
